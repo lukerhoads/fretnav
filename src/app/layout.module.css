@@ -1,0 +1,35 @@
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header_button {
+    padding: 8px 10px;
+    border-radius: 8px;
+}
+
+.header_logo {
+    display: flex;
+    align-items: center;
+}
+
+.header_logo img {
+    width: 40px;
+    height: 40px;
+}
+
+.header_logo p {
+    margin-left: 10px;
+    font-size: 20px;
+}
+
+.header_nav {
+    display: flex;
+    align-items: center;
+}
+
+.header_nav a {
+    margin-right: 15px;
+}
