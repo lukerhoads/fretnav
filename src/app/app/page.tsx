@@ -5,21 +5,23 @@ import styles from "./page.module.css";
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from "react";
-import Position, { Pattern, PositionConfig } from "@/components/Position/Position";
+import Position from "@/components/Position/Position";
+import { Pattern, PositionConfig } from "@/types/pattern";
 import Fretboard from "@/components/Fretboard/Fretboard";
 import html2canvas from "html2canvas";
 import { defaultGroupedOptions, pattern_categories, patterns } from "@/constants/patterns";
 import { useSearchParams } from "next/navigation";
 import Select from 'react-select'
 import { customSelectStyles } from "@/constants/styles";
-
-const hyphenate = (str: string) => str.replace(/ +/g, '-').toLowerCase();
+import { getNote } from "@/utils/note";
+import { hyphenate } from "@/utils/hyphenate";
 
 const groupStyles = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
 };
+
 const groupBadgeStyles = {
   backgroundColor: '#EBECF0',
   borderRadius: '2em',
@@ -52,16 +54,18 @@ export default function Page() {
   const [showNotes, setShowNotes] = useState(false)
   const [userDefinedPatterns, setUserDefinedPatterns] = useState<Pattern[]>([])
   const [userDefinedCategories, setUserDefinedCategories] = useState<string[]>([])
-  const [activePattern, setActivePattern] = useState("")
+  const [activePattern, setActivePattern] = useState("None selected")
   const [activePatternMoveable, setActivePatternMoveable] = useState(false)
+  const [activePatternMutedStrings, setActivePatternMutedStrings] = useState([])
   const [patternName, setPatternName] = useState("")
   const [patternCategory, setPatternCategory] = useState("")
   const [patternMoveable, setPatternMoveable] = useState(false)
   const [error, setError] = useState("")
   const [numOverlays, setNumOverlays] = useState(1)
-  const [patternOverlays, setPatternOverlays] = useState<string[]>(["none"])
+  const [patternOverlays, setPatternOverlays] = useState<string[]>(["None selected"])
   const [positionOverlays, setPositionOverlays] = useState<Pattern[]>([])
   const [createActive, setCreateActive] = useState(false)
+  const [newMutedString, setNewMutedString] = useState("")
 
   const onPositionHighlight = (idx: number) => {
     let fret = idx % 20 + 1
@@ -206,6 +210,7 @@ export default function Page() {
       if (pattern) {
         setPositions(pattern.positions)
         if (pattern.moveable) setActivePatternMoveable(pattern.moveable)
+        if (pattern.mutedStrings) setActivePatternMutedStrings(pattern.mutedStrings)
         return
       } 
 
@@ -213,6 +218,7 @@ export default function Page() {
       if (pattern) {
         setPositions(pattern.positions)
         if (pattern.moveable) setActivePatternMoveable(pattern.moveable)
+        if (pattern.mutedStrings) setActivePatternMutedStrings(pattern.mutedStrings)
         return
       }
     } else if (activePattern == "none") {
@@ -314,10 +320,18 @@ export default function Page() {
                       onLabelChange={(label) => label.length < 3 && setPositions(positions.map((p, i) => i == index ? { ...p, label } : p))} 
                       onDelete={() => setPositions(positions.filter((_, i) => i != index))} 
                       onColorChange={(color) => setPositions(positions.map((p, i) => i == index ? { ...p, color } : p)) }
-                      onSyncChange={(sync_to_note) => setPositions(positions.map((p, i) => i == index ? { ...p, sync_to_note } : p)) } 
+                      onSyncChange={(sync_to_note) => setPositions(positions.map((p, i) => i == index ? { ...p, label: getNote(p.guitar_string, p.fret, tuning), sync_to_note } : p))} 
                       />)}
                   { positions.length == 0 && <p>No positions</p> }
                 </div>
+                <p>Muted Strings: { activePatternMutedStrings.map((string, i) => 
+                    <p key={i}>{string}</p>)}</p>
+                  { activePatternMutedStrings.length == 0 && <p>No muted strings</p> }
+                  <div className={styles.controller_selectors}>
+                    <input type="text" placeholder="New Muted String" onChange={(e) => setNewMutedString(e.target.value)} />
+                    <button className={styles.controller_button + " " + styles.controller_button_icon} onClick={() => Number(newMutedString) ? setActivePatternMutedStrings([...activePatternMutedStrings, Number(newMutedString)]) : setError("Invalid new muted string")}>+</button>
+                    <button className={styles.controller_button + " " + styles.controller_button_icon} onClick={() => setActivePatternMutedStrings(activePatternMutedStrings.slice(0, -1))}>-</button>
+                  </div>
                 <p>{error}</p>
               </div> 
               { createActive && (
@@ -342,16 +356,22 @@ export default function Page() {
           { activeControllerNavItem == "songs" && <div className="controller-songs"></div> }
           { activeControllerNavItem == "lessons" && <div className="controller-lessons"></div> }
           { activeControllerNavItem == "settings" &&<div className="controller-settings">
-            <label htmlFor="show_notes">Show notes</label>
-            <input id="show_notes" type="checkbox" checked={showNotes} onChange={() => setShowNotes(!showNotes)} />
-            <label htmlFor="show_notes">Lefty</label>
-            <input id="show_notes" type="checkbox" checked={lefty} onChange={() => setLefty(!lefty)} />
+            <div className={styles.checkbox_container}>
+              <p>Show notes</p>
+              <input id="show_notes" type="checkbox" checked={showNotes} onChange={() => setShowNotes(!showNotes)} />
+            </div>
+            <div className={styles.checkbox_container}>
+              <p>Lefty</p>
+              <input id="show_notes" type="checkbox" checked={lefty} onChange={() => setLefty(!lefty)} />
+            </div>
+
+            
           </div> }
         </div>
       </div>
 
       <div ref={fretboardRef} className="display">
-        <Fretboard showNotes={showNotes} tuning={tuning} initial_positions={positions} moveable={activePatternMoveable} lefty={lefty} overlaidPatterns={positionOverlays} onPositionAdd={onPositionAdd} onPositionHighlight={onPositionHighlight} onPositionDelete={onPositionDelete} />
+        <Fretboard showNotes={showNotes} mutedStrings={activePatternMutedStrings} tuning={tuning} initial_positions={positions} moveable={activePatternMoveable} lefty={lefty} overlaidPatterns={positionOverlays} onPositionAdd={onPositionAdd} onPositionHighlight={onPositionHighlight} onPositionDelete={onPositionDelete} />
       </div>
     </main>
   );

@@ -1,8 +1,9 @@
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { Pattern, PositionConfig } from "../Position/Position";
+import { Pattern, PositionConfig } from "@/types/pattern";
 import styles from "./fretboard.module.css"
 import useMousePosition from "@/app/hooks/useMousePosition";
-import { escape } from "querystring";
+import { getNote } from "@/utils/note";
+import { DEFAULT_TUNING } from "@/constants/notes";
 
 // TODO: shift to vertical after certain width achieved
 
@@ -13,29 +14,13 @@ type Props = {
     overlaidPatterns: Pattern[],
     lefty: boolean,
     showNotes: boolean,
+    mutedStrings: number[],
     onPositionAdd: (idx: number, note: string) => void
     onPositionHighlight: (idx: number) => void,
     onPositionDelete: (idx: number) => void
 }
 
-const shiftArrayCounterclockwise = (arr: any[], numTimes: number): any[] => {
-    if (numTimes == 0) return arr
-    for (let i = 0; i < numTimes; i++) {
-        let first = arr.shift()
-        arr.push(first)
-    }
-
-    return arr
-}
-
-const getNote = (fret: number, string: number, tuning: string[]) => {
-    let noteArr = shiftArrayCounterclockwise(NOTES, NOTES.indexOf(tuning[5 - string]))
-    return noteArr[fret % noteArr.length]
-}
-
-const NOTES = ["E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#"];
-
-const Fretboard = ({ tuning = ["E", "A", "D", "G", "B", "E"], initial_positions = [], moveable = false, lefty = false, showNotes = false, overlaidPatterns = [], onPositionAdd, onPositionHighlight, onPositionDelete }: Props) => {
+const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positions = [], moveable = false, lefty = false, showNotes = false, overlaidPatterns = [], onPositionAdd, onPositionHighlight, onPositionDelete }: Props) => {
     const mousePosition = useMousePosition()
     const [controllerString, setControllerString] = useState(-1)
     const [controllerFret, setControllerFret] = useState(-1)
@@ -126,35 +111,12 @@ const Fretboard = ({ tuning = ["E", "A", "D", "G", "B", "E"], initial_positions 
     return (
         <div className={styles.fretboard}>
             <div className={styles.fret_labels}>
-                <div><p>1</p></div>
-                <div><p>2</p></div>
-                <div><p>3</p></div>
-                <div><p>4</p></div>
-                <div><p>5</p></div>
-                <div><p>6</p></div>
-                <div><p>7</p></div>
-                <div><p>8</p></div>
-                <div><p>9</p></div>
-                <div><p>10</p></div>
-                <div><p>11</p></div>
-                <div><p>12</p></div>
-                <div><p>13</p></div>
-                <div><p>14</p></div>
-                <div><p>15</p></div>
-                <div><p>16</p></div>
-                <div><p>17</p></div>
-                <div><p>18</p></div>
-                <div><p>19</p></div>
-                <div><p>20</p></div>
+                {Array.from(Array(20).keys()).map((i) => 
+                    <div key={i}><p>{i+1}</p></div>)}
             </div>
             <div className={styles.string_labels}>
-                <div><p>{tuning[5]}</p></div>
-                <div><p>{tuning[4]}</p></div>
-                <div><p>{tuning[3]}</p></div>
-                <div><p>{tuning[2]}</p></div>
-                <div><p>{tuning[1]}</p></div>
-                <div><p>{tuning[0]}</p></div>
-                <div></div>
+                {Array.from(Array(6).keys()).map((i) => 
+                    <div key={i}><p className={mutedStrings.includes(i+1) ? styles.muted : ""}>{tuning[5-i]}</p></div>)}
             </div>
             <div className={styles.board_container} ref={bc}>
                 <img src="/fretboard-markers.png" alt="board" />
@@ -165,9 +127,10 @@ const Fretboard = ({ tuning = ["E", "A", "D", "G", "B", "E"], initial_positions 
                         let config = (dragging ? draggingPositions : positions).find(p => p.guitar_string == gt_string && p.fret == fret)
                         let overlaidConfigs = overlaidPatterns.map(p => p.positions.find(c => c.guitar_string == gt_string && c.fret == fret)).filter(c => c != undefined) as PositionConfig[]
                         let note = getNote(fret, gt_string, tuning)
+                        let string_muted = "rgba(0, 0, 0, " + (mutedStrings.includes(gt_string) ? 0.5 : 1) + ")" 
                         return (
                             <div key={i} className={styles.fret_box} style={{
-                                borderTop: gt_string > 0 ? "3px solid black" : "1px solid black",
+                                borderTop: gt_string > 0 ? `3px solid ${string_muted}` : "1px solid black",
                             }}>
                                 {gt_string < 6 && (
                                     config != undefined ? (

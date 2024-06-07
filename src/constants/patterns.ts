@@ -1,6 +1,6 @@
 import { Pattern } from "@/components/Position/Position";
 
-export const pattern_categories = ["Open Chords", "Barre Chords", "Octaves", "Pentatonics", "Triads", "Test"]
+export const pattern_categories = ["Open Chords", "Open Chord Variations", "Barre Chords", "Octaves", "Pentatonics", "Triads", "Test"]
 
 export const patterns: Pattern[] = [
     {
@@ -190,45 +190,330 @@ export const patterns: Pattern[] = [
         ]
     },
     {
-        name: "Barre E major",
+        name: "E major",
         category: "Barre Chords",
         moveable: true,
         positions: [
             {
                 "guitar_string": 3,
                 "fret": 3,
-                "label": "F",
-                "color": "black"
+                "label": "1",
+                "color": "#58B4EE"
             },
             {
                 "guitar_string": 4,
                 "fret": 3,
-                "label": "C",
-                "color": "black"
+                "label": "5",
+                "color": "#FA1A0D"
             },
             {
                 "guitar_string": 2,
                 "fret": 2,
-                "label": "A",
-                "color": "black"
+                "label": "3",
+                "color": "#FD8D04"
             },
             {
                 "guitar_string": 0,
                 "fret": 1,
-                "label": "F",
-                "color": "black"
+                "label": "1",
+                "color": "#58B4EE"
             },
             {
                 "guitar_string": 1,
                 "fret": 1,
-                "label": "C",
-                "color": "black"
+                "label": "5",
+                "color": "#FA1A0D"
             },
             {
                 "guitar_string": 5,
                 "fret": 1,
-                "label": "F",
-                "color": "black"
+                "label": "1",
+                "color": "#58B4EE"
+            }
+        ]
+    },
+    {
+        name: "E minor",
+        category: "Barre Chords",
+        moveable: true,
+        positions: [
+            {
+                "guitar_string": 3,
+                "fret": 3,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 4,
+                "fret": 3,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 0,
+                "fret": 1,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 1,
+                "fret": 1,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 5,
+                "fret": 1,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 2,
+                "fret": 1,
+                "label": "b3",
+                "color": "#FD8D04"
+            }
+        ]
+    },
+    {
+        name: "E minor 7th",
+        category: "Barre Chords",
+        moveable: true,
+        positions: [
+            {
+                "guitar_string": 4,
+                "fret": 3,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 0,
+                "fret": 1,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 1,
+                "fret": 1,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 5,
+                "fret": 1,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 2,
+                "fret": 1,
+                "label": "b3",
+                "color": "#FD8D04"
+            },
+            {
+                "guitar_string": 3,
+                "fret": 1,
+                "label": "b7",
+                "color": "#ABCE30"
+            }
+        ]
+    },
+    {
+        name: "E major 7th",
+        category: "Barre Chords",
+        moveable: true,
+        positions: [
+            {
+                "guitar_string": 4,
+                "fret": 3,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 0,
+                "fret": 1,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 1,
+                "fret": 1,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 5,
+                "fret": 1,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 2,
+                "fret": 2,
+                "label": "3",
+                "color": "#FD8D04"
+            },
+            {
+                "guitar_string": 3,
+                "fret": 2,
+                "label": "7",
+                "color": "#ABCE30"
+            }
+        ]
+    },
+    {
+        name: "E dominant 7th",
+        category: "Barre Chords",
+        moveable: true,
+        positions: [
+            {
+                "guitar_string": 4,
+                "fret": 3,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 0,
+                "fret": 1,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 1,
+                "fret": 1,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 5,
+                "fret": 1,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 2,
+                "fret": 2,
+                "label": "3",
+                "color": "#FD8D04"
+            },
+            {
+                "guitar_string": 3,
+                "fret": 1,
+                "label": "b7",
+                "color": "#ABCE30"
+            }
+        ]
+    },
+    {
+        name: "Esus4",
+        category: "Barre Chords",
+        moveable: true,
+        positions: [
+            {
+                "guitar_string": 4,
+                "fret": 3,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 0,
+                "fret": 1,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 1,
+                "fret": 1,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 5,
+                "fret": 1,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 2,
+                "fret": 3,
+                "label": "4",
+                "color": "#0E8BC4"
+            },
+            {
+                "guitar_string": 3,
+                "fret": 3,
+                "label": "1",
+                "color": "#58B4EE"
+            }
+        ]
+    },
+    {
+        name: "E power chord",
+        category: "Barre Chords",
+        moveable: true,
+        positions: [
+            {
+                "guitar_string": 4,
+                "fret": 3,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 0,
+                "fret": 1,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 1,
+                "fret": 1,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 5,
+                "fret": 1,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 3,
+                "fret": 3,
+                "label": "1",
+                "color": "#58B4EE"
+            }
+        ]
+    },
+    {
+        name: "D major",
+        category: "Barre Chords",
+        moveable: true,
+        mutedStrings: [5, 6],
+        positions: [
+            {
+                "guitar_string": 0,
+                "fret": 3,
+                "label": "3",
+                "color": "#FD8D04"
+            },
+            {
+                "guitar_string": 1,
+                "fret": 4,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 2,
+                "fret": 3,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 3,
+                "fret": 1,
+                "label": "1",
+                "color": "#58B4EE",
+                "sync_to_note": true
             }
         ]
     },
@@ -1079,79 +1364,119 @@ export const patterns: Pattern[] = [
         ]
     },
     {
-        name: "Root Major Triad - Strings 1, 2, 3",
+        name: "Triad Cheetsheet",
         category: "Triads",
         moveable: true,
         positions: [
             {
                 "guitar_string": 0,
-                "fret": 1,
-                "label": "p5",
-                "color": "black"
-            },
-            {
-                "guitar_string": 2,
-                "fret": 3,
-                "label": "R",
-                "color": "#ff0000"
-            },
-            {
-                "guitar_string": 1,
-                "fret": 3,
-                "label": "m3",
-                "color": "black"
-            }
-        ]
-    },
-    {
-        name: "1st Inv Major Triad - Strings 1, 2, 3",
-        category: "Triads",
-        moveable: true,
-        positions: [
-            {
-                "guitar_string": 0,
-                "fret": 1,
-                "label": "R",
-                "color": "#ff0000"
-            },
-            {
-                "guitar_string": 1,
-                "fret": 1,
-                "label": "p5",
-                "color": "black"
-            },
-            {
-                "guitar_string": 2,
                 "fret": 2,
-                "label": "m3",
-                "color": "black"
-            }
-        ]
-    },
-    {
-        name: "2nd Inv Major Triad - Strings 1, 2, 3",
-        category: "Triads",
-        moveable: true,
-        positions: [
-            {
-                "guitar_string": 0,
-                "fret": 1,
-                "label": "m3",
-                "color": "black"
-            },
-            {
-                "guitar_string": 2,
-                "fret": 1,
-                "label": "p5",
-                "color": "black"
+                "label": "1",
+                "color": "#58B4EE"
             },
             {
                 "guitar_string": 1,
                 "fret": 2,
-                "label": "R",
-                "color": "#ff0000"
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 2,
+                "fret": 3,
+                "label": "3",
+                "color": "#FD8D04"
+            },
+            {
+                "guitar_string": 3,
+                "fret": 4,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 4,
+                "fret": 4,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 5,
+                "fret": 2,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 0,
+                "fret": 7,
+                "label": "3",
+                "color": "#FD8D04"
+            },
+            {
+                "guitar_string": 1,
+                "fret": 8,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 2,
+                "fret": 7,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 3,
+                "fret": 9,
+                "label": "3",
+                "color": "#FD8D04"
+            },
+            {
+                "guitar_string": 4,
+                "fret": 10,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 5,
+                "fret": 10,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 0,
+                "fret": 13,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 1,
+                "fret": 15,
+                "label": "3",
+                "color": "#FD8D04"
+            },
+            {
+                "guitar_string": 2,
+                "fret": 15,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 3,
+                "fret": 15,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 4,
+                "fret": 13,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 5,
+                "fret": 13,
+                "label": "5",
+                "color": "#FA1A0D"
             }
-        ]
+        ],
     }
 ]
 

@@ -17,21 +17,6 @@ type Props = {
     onDelete: () => void
 }
 
-export type PositionConfig = {
-    guitar_string: number,
-    fret: number,
-    label: string,
-    color: string,
-    sync_to_note?: boolean
-}
-
-export type Pattern = {
-    name: string,
-    moveable?: boolean
-    category?: string,
-    positions: PositionConfig[]
-} 
-
 const Position = ({ guitar_string, fret, label, color, tuning, sync_to_note, moveable, highlighted, onLabelChange, onColorChange, onSyncChange, onDelete }: Props) => {
     return (
         <div className={styles.position_container} style={{
