@@ -176,9 +176,10 @@ export default function Page() {
     setPatternOverlays(patternOverlays.map((p, i) => i == idx ? oldActivePattern : p))
   }
 
-  const sharePattern = () => {
+  const shareElement = (tab: string, name: string) => {
     let url = new URL("http://localhost:3000/app")
     let urlParams = new URLSearchParams(url.search)
+    urlParams.append("tab", tab)
     urlParams.append("pattern", hyphenate(activePattern))
     navigator.clipboard.writeText(url.toString() + "?" + urlParams.toString())
   }
@@ -225,6 +226,13 @@ export default function Page() {
       setPositions([])
     }
   }, [activePattern])
+
+  useEffect(() => {
+    let desiredTab = searchParams.get("tab")
+    if (desiredTab != null && desiredTab != "") {
+      setActiveControllerNavItem(desiredTab)
+    }
+  }, [])
 
   useEffect(() => {
     let desiredPattern = searchParams.get('pattern')
@@ -287,7 +295,7 @@ export default function Page() {
                   <button className={styles.controller_button} onClick={() => clearFretboard()}>Clear</button>
                   <button className={styles.controller_button} onClick={downloadFretboardImage}>Download Fretboard Image</button>
                   <button className={styles.controller_button} onClick={() => console.log(positions)}>Print Pattern</button>
-                  <button className={styles.controller_button} onClick={() => sharePattern()}>Share Pattern</button>
+                  <button className={styles.controller_button} onClick={() => shareElement(activeControllerNavItem, activePattern)}>Share Pattern</button>
                   { positions.length > 0 && <button className={styles.controller_button} onClick={() => setCreateActive(true)}>Create Pattern</button> }
                 </div>
                 <p>Pattern Overlays</p>
@@ -324,7 +332,7 @@ export default function Page() {
                       />)}
                   { positions.length == 0 && <p>No positions</p> }
                 </div>
-                <p>Muted Strings: { activePatternMutedStrings.map((string, i) => 
+                <p>Muted Strings { activePatternMutedStrings.map((string, i) => 
                     <p key={i}>{string}</p>)}</p>
                   { activePatternMutedStrings.length == 0 && <p>No muted strings</p> }
                   <div className={styles.controller_selectors}>
