@@ -1,0 +1,17 @@
+.container {
+    position: relative;
+}
+
+.explore {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 10px;
+}
+
+.note_info {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+}

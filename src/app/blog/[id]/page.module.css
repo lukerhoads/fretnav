@@ -1,0 +1,9 @@
+.container {
+    max-width: 70%;
+}
+
+.blog_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

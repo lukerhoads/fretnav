@@ -1,4 +1,4 @@
-import { Pattern } from "@/components/Position/Position";
+import { Pattern } from "@/types/pattern";
 
 export const pattern_categories = ["Open Chords", "Open Chord Variations", "Barre Chords", "Octaves", "Pentatonics", "Triads", "Test"]
 
@@ -1364,7 +1364,7 @@ export const patterns: Pattern[] = [
         ]
     },
     {
-        name: "Triad Cheetsheet",
+        name: "Major Triad Cheetsheet",
         category: "Triads",
         moveable: true,
         positions: [
@@ -1477,6 +1477,121 @@ export const patterns: Pattern[] = [
                 "color": "#FA1A0D"
             }
         ],
+    },
+    {
+        name: "Minor Triad Cheetsheet",
+        category: "Triads",
+        moveable: true,
+        positions: [
+            {
+                "guitar_string": 0,
+                "fret": 2,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 1,
+                "fret": 2,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 3,
+                "fret": 4,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 4,
+                "fret": 4,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 5,
+                "fret": 2,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 1,
+                "fret": 8,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 2,
+                "fret": 7,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 4,
+                "fret": 10,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 5,
+                "fret": 10,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 0,
+                "fret": 13,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 2,
+                "fret": 15,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 3,
+                "fret": 15,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 4,
+                "fret": 13,
+                "label": "1",
+                "color": "#58B4EE"
+            },
+            {
+                "guitar_string": 5,
+                "fret": 13,
+                "label": "5",
+                "color": "#FA1A0D"
+            },
+            {
+                "guitar_string": 2,
+                "fret": 2,
+                "label": "b3",
+                "color": "#FD8D04"
+            },
+            {
+                "guitar_string": 0,
+                "fret": 6,
+                "label": "b3",
+                "color": "#FD8D04"
+            },
+            {
+                "guitar_string": 3,
+                "fret": 8,
+                "label": "b3",
+                "color": "#FD8D04"
+            },
+            {
+                "guitar_string": 1,
+                "fret": 14,
+                "label": "b3",
+                "color": "#FD8D04"
+            }
+        ]
     }
 ]
 

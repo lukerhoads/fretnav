@@ -1,0 +1,14 @@
+.container {
+    margin-top: 20px;
+}
+
+.post {
+    border: 1px solid black;
+    padding: 10px;
+    margin-top: 10px;
+    transition-duration: 0.3s;
+}
+
+.post:hover {
+    border: 1px solid gray;
+}

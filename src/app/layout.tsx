@@ -32,13 +32,16 @@ export default function RootLayout({
             </div>
           </a>
           <div className={styles.header_nav}>
-            {header_url.includes("/blog") && <Link href="/app">App</Link>}
-            {header_url.includes("/app") && <Link href="/blog">Blog</Link>}
+            {header_url.includes("/app") ? null : <Link href="/app">App</Link>}
+            {header_url.includes("/blog") ? null : <Link href="/blog">Blog</Link>}
             <Link href="/help">Help</Link>
             <button className={styles.header_button}>Go Pro</button>
           </div>
         </div>
         {children}
+        {header_url.includes("/app") ? null : <div className={styles.footer}>
+          <p>Copyright 2022. All rights reserved.</p>
+        </div>}
       </body>
     </html>
   );

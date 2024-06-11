@@ -11,16 +11,16 @@ type Props = {
     tuning: string[],
     initial_positions: PositionConfig[],
     moveable: boolean,
-    overlaidPatterns: Pattern[],
-    lefty: boolean,
-    showNotes: boolean,
-    mutedStrings: number[],
-    onPositionAdd: (idx: number, note: string) => void
-    onPositionHighlight: (idx: number) => void,
-    onPositionDelete: (idx: number) => void
+    overlaidPatterns?: Pattern[],
+    lefty?: boolean,
+    showNotes?: boolean,
+    mutedStrings?: number[],
+    onPositionAdd?: (idx: number, note: string) => void
+    onPositionHighlight?: (idx: number) => void,
+    onPositionDelete?: (idx: number) => void
 }
 
-const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positions = [], moveable = false, lefty = false, showNotes = false, overlaidPatterns = [], onPositionAdd, onPositionHighlight, onPositionDelete }: Props) => {
+const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positions = [], moveable = false, lefty = false, showNotes = false, overlaidPatterns = [], onPositionAdd = () => {}, onPositionHighlight = () => {}, onPositionDelete = () => {} }: Props) => {
     const mousePosition = useMousePosition()
     const [controllerString, setControllerString] = useState(-1)
     const [controllerFret, setControllerFret] = useState(-1)
