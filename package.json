@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "genblog": "npx tsc ./src/constants/patterns && node scripts/blog.js"
   },
   "dependencies": {
+    "backoff": "^2.5.0",
     "chroma-js": "^2.4.2",
     "gray-matter": "^4.0.3",
     "html2canvas": "^1.4.1",
@@ -25,6 +27,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
-    "typescript": "^5"
+    "openai": "^4.51.0",
+    "typescript": "^5.4.5"
   }
 }

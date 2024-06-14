@@ -359,15 +359,15 @@ export default function Page() {
             </>
           }
 
-          { activeControllerNavItem == "songs" && <div className="controller-songs"></div> }
-          { activeControllerNavItem == "lessons" && <div className="controller-lessons"></div> }
+          { activeControllerNavItem == "songs" && <div className="controller-songs">Coming soon!</div> }
+          { activeControllerNavItem == "lessons" && <div className="controller-lessons">Coming soon!</div> }
           { activeControllerNavItem == "settings" &&<div className="controller-settings">
             <div className={styles.checkbox_container}>
               <p>Show notes</p>
               <input id="show_notes" type="checkbox" checked={showNotes} onChange={() => setShowNotes(!showNotes)} />
             </div>
             <div className={styles.checkbox_container}>
-              <p>Lefty</p>
+              <p>Lefty (Coming Soon)</p>
               <input id="show_notes" type="checkbox" checked={lefty} onChange={() => setLefty(!lefty)} />
             </div>
 

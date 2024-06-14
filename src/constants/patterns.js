@@ -1,8 +1,8 @@
-import { Pattern } from "../types/pattern";
-
-export const pattern_categories = ["Open Chords", "Open Chord Variations", "Barre Chords", "Octaves", "Pentatonics", "Triads", "Test"]
-
-export const patterns: Pattern[] = [
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Patterns = exports.defaultGroupedOptions = exports.patterns = exports.pattern_categories = void 0;
+exports.pattern_categories = ["Open Chords", "Open Chord Variations", "Barre Chords", "Octaves", "Pentatonics", "Triads", "Test"];
+exports.patterns = [
     {
         name: "Open E",
         category: "Open Chords",
@@ -122,7 +122,7 @@ export const patterns: Pattern[] = [
                 "color": "black"
             }
         ]
-    }, 
+    },
     {
         name: "Open E minor",
         category: "Open Chords",
@@ -1593,10 +1593,9 @@ export const patterns: Pattern[] = [
             }
         ]
     }
-]
-
-export const defaultGroupedOptions = pattern_categories.map(c => ({ label: c, options: patterns.filter(p => p.category == c).map(p => ({ value: p.name, label: p.name })) }))
-
-export module Patterns {
-    export const data = patterns;
-}
+];
+exports.defaultGroupedOptions = exports.pattern_categories.map(function (c) { return ({ label: c, options: exports.patterns.filter(function (p) { return p.category == c; }).map(function (p) { return ({ value: p.name, label: p.name }); }) }); });
+var Patterns;
+(function (Patterns) {
+    Patterns.data = exports.patterns;
+})(Patterns || (exports.Patterns = Patterns = {}));

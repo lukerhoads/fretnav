@@ -130,8 +130,6 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
                     // min fret - 1 + idealFrets ending
                 }
 
-                console.log(config)
-                console.log(config.starting_string * (config.ending_fret - config.starting_fret), (config.ending_string + 1)*(config.ending_fret - config.starting_fret))
                 if (config.ending_string > 20) config.ending_string = 20
                 if (config.ending_fret > config.starting_fret && config.ending_string > config.starting_string) setResizeConfig(config)
             }
@@ -198,9 +196,8 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
                     gridTemplateColumns: `repeat(${resizeConfig.ending_fret - resizeConfig.starting_fret}, auto)`,
                 }}>
                     {arrayRange(resizeConfig.starting_string * (resizeConfig.ending_fret - resizeConfig.starting_fret), (resizeConfig.ending_string + 1)*(resizeConfig.ending_fret - resizeConfig.starting_fret) - 1, 1).map((i) => {
-                        console.log(i)
                         let fret = resizeConfig.starting_fret + (i % (resizeConfig.ending_fret - resizeConfig.starting_fret) + 1) // i % 20 + 1
-                        let gt_string = resizeConfig.starting_string + Math.floor(i / (resizeConfig.ending_fret - resizeConfig.starting_fret)) - 1 // Math.floor(i / 20)
+                        let gt_string = resizeConfig.starting_string + Math.floor(i / (resizeConfig.ending_fret - resizeConfig.starting_fret)) // Math.floor(i / 20)
                         let config = (dragging ? draggingPositions : positions).find(p => p.guitar_string == gt_string && p.fret == fret)
                         let overlaidConfigs = overlaidPatterns.map(p => p.positions.find(c => c.guitar_string == gt_string && c.fret == fret)).filter(c => c != undefined) as PositionConfig[]
                         let note = getNote(fret, gt_string, tuning)

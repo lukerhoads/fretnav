@@ -6,7 +6,7 @@ import { DEFAULT_TUNING } from '@/constants/notes'
 
 export default function Page({ params }: { params: { id: string }}) {
     let post = getSortedPostsData().find(p => p.id == params.id)
-   if (post != undefined) {
+    if (post != undefined) {
         return (
             <div className={styles.container}>
                 <div className={styles.blog_header}>
@@ -14,9 +14,9 @@ export default function Page({ params }: { params: { id: string }}) {
                     <p>{post.date}</p>
                 </div>
 
-                <FretboardPane tuning={DEFAULT_TUNING} patternName='Open E' />
+                <FretboardPane tuning={DEFAULT_TUNING} patternName={post.pattern} />
                 
-                <Markdown>{post.content}</Markdown>
+                <Markdown className={styles.content}>{post.content}</Markdown>
             </div>
         )
     }

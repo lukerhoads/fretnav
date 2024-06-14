@@ -9,7 +9,7 @@ import { Pattern, PositionConfig } from '@/types/pattern'
 import { hyphenate } from '@/utils/hyphenate'
 
 type Props = { 
-    patternName: string
+    patternName?: string
     tuning: string[]
 }
 
@@ -22,7 +22,7 @@ const FretboardPane = ({ patternName = "", tuning = ["E", "A", "D", "G", "B", "E
     const [showNotes, setShowNotes] = useState(false)
 
     useEffect(() => {
-        let p = patterns.find(p => p.name == patternName)
+        let p = patterns.find(p => hyphenate(p.name) == patternName)
         if (p != undefined) setPattern(p)
         else {} // find pattern in user defined
     }, [])
@@ -35,7 +35,7 @@ const FretboardPane = ({ patternName = "", tuning = ["E", "A", "D", "G", "B", "E
     return (
         <div className={styles.container}>
             {pattern && <div className={styles.pattern_info}>
-                <p className={styles.pattern_name}>Pattern: {patternName}</p>
+                <p className={styles.pattern_name}>Pattern: {pattern.name}</p>
                 <div className={styles.checkbox_container}>
                     <p>Show notes</p>
                     <input id="show_notes" type="checkbox" checked={showNotes} onChange={() => setShowNotes(!showNotes)} />
