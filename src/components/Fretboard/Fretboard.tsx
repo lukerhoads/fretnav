@@ -4,8 +4,16 @@ import styles from "./fretboard.module.css"
 import useMousePosition from "@/app/hooks/useMousePosition";
 import { getNote } from "@/utils/note";
 import { DEFAULT_TUNING } from "@/constants/notes";
+import { DEFAULT_RESIZE_CONFIG, ResizeConfig } from "@/types/resize";
+import { DOT_INDEXES } from "@/constants/styles";
 
 // TODO: shift to vertical after certain width achieved
+
+const arrayRange = (start: number, stop: number, step: number) =>
+    Array.from(
+    { length: (stop - start) / step + 1 },
+    (value, index) => start + index * step
+    );
 
 type Props = {
     tuning: string[],
@@ -15,12 +23,13 @@ type Props = {
     lefty?: boolean,
     showNotes?: boolean,
     mutedStrings?: number[],
+    resizeToHighlight?: boolean,
     onPositionAdd?: (idx: number, note: string) => void
-    onPositionHighlight?: (idx: number) => void,
+    onPositionHighlight?: (idx: number, fret: number, string: number) => void,
     onPositionDelete?: (idx: number) => void
 }
 
-const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positions = [], moveable = false, lefty = false, showNotes = false, overlaidPatterns = [], onPositionAdd = () => {}, onPositionHighlight = () => {}, onPositionDelete = () => {} }: Props) => {
+const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positions = [], moveable = false, lefty = false, resizeToHighlight = false, showNotes = false, overlaidPatterns = [], onPositionAdd = () => {}, onPositionHighlight = () => {}, onPositionDelete = () => {} }: Props) => {
     const mousePosition = useMousePosition()
     const [controllerString, setControllerString] = useState(-1)
     const [controllerFret, setControllerFret] = useState(-1)
@@ -30,6 +39,7 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
     const [counter, setCounter] = useState<NodeJS.Timeout | null>(null)
     const bc = useRef<HTMLDivElement>(null)
     let [positions, setPositions] = useState(initial_positions)
+    let [resizeConfig, setResizeConfig] = useState<ResizeConfig>(DEFAULT_RESIZE_CONFIG)
     
     const handleRightClick = (e: any, idx: number) => {
         e.preventDefault()
@@ -80,6 +90,57 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
     }, [initialPositions, draggingPositions])
 
     useEffect(() => {
+        if (resizeToHighlight) {
+            if (bc.current && positions.length > 0) {
+                let config: ResizeConfig = {
+                    starting_fret: 0,
+                    ending_fret: 0,
+                    starting_string: 0,
+                    ending_string: 0,
+                }
+                const rect = bc.current.getBoundingClientRect()
+                let minFret = Math.min(...positions.map(p => p.fret))
+                let maxFret = Math.max(...positions.map(p => p.fret))
+                let minString = Math.min(...positions.map(p => p.guitar_string))
+                let maxString = Math.max(...positions.map(p => p.guitar_string))
+                let idealRectWidth = 50;
+                let idealRectHeight = idealRectWidth / 1.45;
+                let idealFrets = Math.floor(rect.width / idealRectWidth)
+                let idealStrings = Math.floor(rect.height / idealRectHeight)
+                config.starting_fret = minFret - 1
+                if (idealFrets < (maxFret - minFret + 2)) {
+                    // min fret - 1 starting
+                    // max fret + 1 ending
+                    config.ending_fret = maxFret + 1
+                } else {
+                    // min fret - 1 starting
+                    config.ending_fret = minFret - 1 + idealFrets
+                    // min fret - 1 + idealFrets ending
+                }
+
+                if (config.ending_fret > 20) config.ending_fret = 20
+                config.starting_string = minString - 1
+                if (idealStrings < (maxString - minString + 2)) {
+                    // min fret - 1 starting
+                    // max fret + 1 ending
+                    config.ending_string = maxString + 1
+                } else {
+                    // min fret - 1 starting
+                    config.ending_string = minString - 1 + idealStrings
+                    // min fret - 1 + idealFrets ending
+                }
+
+                console.log(config)
+                console.log(config.starting_string * (config.ending_fret - config.starting_fret), (config.ending_string + 1)*(config.ending_fret - config.starting_fret))
+                if (config.ending_string > 20) config.ending_string = 20
+                if (config.ending_fret > config.starting_fret && config.ending_string > config.starting_string) setResizeConfig(config)
+            }
+        } else {
+            setResizeConfig(DEFAULT_RESIZE_CONFIG)
+        }
+    }, [resizeToHighlight, bc, positions])
+
+    useEffect(() => {
         if (dragging && draggingPositions.length > 0 && mousePosition != null && mousePosition.x != null && mousePosition.y != null && bc.current) {
             const rect = bc.current.getBoundingClientRect()
             const fret_width = rect.width / 20 
@@ -109,28 +170,44 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
     }, [mousePosition])
     
     return (
-        <div className={styles.fretboard}>
-            <div className={styles.fret_labels}>
-                {Array.from(Array(20).keys()).map((i) => 
+        <div className={styles.fretboard} style={{
+            gridTemplateRows: `repeat(${resizeConfig.ending_string - resizeConfig.starting_string + 1}, auto)`,
+            gridTemplateColumns: `repeat(${resizeConfig.ending_fret - resizeConfig.starting_fret + 1}, auto)`
+        }}>
+            <div className={styles.fret_labels} style={{
+                gridTemplateColumns: `repeat(${resizeConfig.ending_fret - resizeConfig.starting_fret}, ${(100 / (resizeConfig.ending_fret - resizeConfig.starting_fret)).toFixed(5)}%)`,
+                gridColumn: `2 / span ${resizeConfig.ending_fret - resizeConfig.starting_fret}`
+            }}>
+                {arrayRange(resizeConfig.starting_fret, resizeConfig.ending_fret - 1, 1).map((i) => 
                     <div key={i}><p>{i+1}</p></div>)}
             </div>
-            <div className={styles.string_labels}>
-                {Array.from(Array(6).keys()).map((i) => 
+            <div className={styles.string_labels} style={{
+                gridTemplateRows: `repeat(${resizeConfig.ending_string - resizeConfig.starting_string + 1}, ${(100 / (resizeConfig.ending_string - resizeConfig.starting_string + 1)).toFixed(5)}%)`,
+                gridRow: `2 / span ${resizeConfig.ending_string - resizeConfig.starting_string}`
+            }}>
+                {arrayRange(resizeConfig.starting_string, resizeConfig.ending_string - 1, 1).map((i) => 
                     <div key={i}><p className={mutedStrings.includes(i+1) ? styles.muted : ""}>{tuning[5-i]}</p></div>)}
             </div>
-            <div className={styles.board_container} ref={bc}>
-                <img src="/fretboard-markers.png" alt="board" />
-                <div className={styles.board}>
-                    {Array.from(Array(140).keys()).map((i) => {
-                        let fret = i % 20 + 1
-                        let gt_string = Math.floor(i / 20)
+            <div className={styles.board_container} ref={bc} style={{
+                gridRow: `2 / span ${resizeConfig.ending_string - resizeConfig.starting_string}`,
+                gridColumn: `2 / span ${resizeConfig.ending_fret - resizeConfig.starting_fret}`
+            }}>
+                <img src="/fretboard-markers.png" alt="board" className={styles.board_image} />
+                <div className={styles.board} style={{
+                    gridTemplateRows: `repeat(${resizeConfig.ending_string - resizeConfig.starting_string}, auto)`,
+                    gridTemplateColumns: `repeat(${resizeConfig.ending_fret - resizeConfig.starting_fret}, auto)`,
+                }}>
+                    {arrayRange(resizeConfig.starting_string * (resizeConfig.ending_fret - resizeConfig.starting_fret), (resizeConfig.ending_string + 1)*(resizeConfig.ending_fret - resizeConfig.starting_fret) - 1, 1).map((i) => {
+                        console.log(i)
+                        let fret = resizeConfig.starting_fret + (i % (resizeConfig.ending_fret - resizeConfig.starting_fret) + 1) // i % 20 + 1
+                        let gt_string = resizeConfig.starting_string + Math.floor(i / (resizeConfig.ending_fret - resizeConfig.starting_fret)) - 1 // Math.floor(i / 20)
                         let config = (dragging ? draggingPositions : positions).find(p => p.guitar_string == gt_string && p.fret == fret)
                         let overlaidConfigs = overlaidPatterns.map(p => p.positions.find(c => c.guitar_string == gt_string && c.fret == fret)).filter(c => c != undefined) as PositionConfig[]
                         let note = getNote(fret, gt_string, tuning)
                         let string_muted = "rgba(0, 0, 0, " + (mutedStrings.includes(gt_string) ? 0.5 : 1) + ")" 
                         return (
                             <div key={i} className={styles.fret_box} style={{
-                                borderTop: gt_string > 0 ? `3px solid ${string_muted}` : "1px solid black",
+                                borderTop: (gt_string - resizeConfig.starting_string) > 0 ? `3px solid ${string_muted}` : "1px solid black",
                             }}>
                                 {gt_string < 6 && (
                                     config != undefined ? (
@@ -139,7 +216,7 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
                                             border: "1px solid transparent",
                                             boxShadow: overlaidConfigs.length > 0 ? overlaidConfigs.map((c, i) => `0 0 0 ${2*i+1}px white, 0 0 0 ${2*i+2}px ${c.color}`).join(", ") : ""
                                             // boxShadow: "0 0 0 2px white, 0 0 0 3px green"
-                                        }} onClick={() => onPositionHighlight(i)}>
+                                        }} onClick={() => onPositionHighlight(i, fret, gt_string)}>
                                             <p>{config.label}</p>
                                         </button>
                                     ) : (
@@ -160,6 +237,12 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
                                             <p>{c.label}</p>
                                         </button>
                                     ))
+                                )}
+                                {DOT_INDEXES.includes(gt_string * 20 + fret - 1) && (
+                                    <div className={styles.dot} style={{
+                                        width: bc.current ? bc.current.getBoundingClientRect().width / (resizeConfig.ending_fret - resizeConfig.starting_fret) / 3 : '20px',
+                                        height: bc.current ? bc.current.getBoundingClientRect().width / (resizeConfig.ending_fret - resizeConfig.starting_fret) / 3 : '20px',
+                                    }} />
                                 )}
                             </div>
                         )

@@ -1,6 +1,8 @@
 import { StylesConfig } from "react-select";
 import chroma from 'chroma-js'
 
+export const DOT_INDEXES = [63, 65, 67, 69, 75, 77, 79, 52, 92].map(i => i - 1)
+
 export const customSelectStyles: StylesConfig = {
     control: (provided) => ({
       ...provided,

@@ -67,9 +67,7 @@ export default function Page() {
   const [createActive, setCreateActive] = useState(false)
   const [newMutedString, setNewMutedString] = useState("")
 
-  const onPositionHighlight = (idx: number) => {
-    let fret = idx % 20 + 1
-    let string = Math.floor(idx / 20)
+  const onPositionHighlight = (idx: number, fret: number, string: number) => {
     let idx_active = positions.findIndex(p => p.guitar_string == string && p.fret == fret)
     setIdxActive(idx_active)
     setTimeout(() => {
