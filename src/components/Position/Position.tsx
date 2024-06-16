@@ -40,7 +40,7 @@ const Position = ({ guitar_string, fret, label, color, tuning, sync_to_note, mov
                     value={/^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/.test(color) ? colourOptions.find(c => c.color == color) : colourOptions.find(c => c.value == color)} 
                     options={colourOptions} 
                     styles={colourStyles} 
-                    onChange={(e, f) => (f.action == 'select-option' && e && e.value) && onColorChange(e.color) } />
+                    onChange={(e: any, f) => (f.action == 'select-option' && e && e.value) && onColorChange(e.color) } />
             </div>
         </div>
     )

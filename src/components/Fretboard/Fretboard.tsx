@@ -224,8 +224,8 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
                                 )}
                                 {gt_string < 6 && showNotes && <p className={styles.note}>{note}</p>}
                                 {gt_string < 6 && overlaidConfigs.length > 0 && config == undefined && (
-                                    overlaidConfigs.length > 0 && overlaidConfigs.map(c => (
-                                        <button onContextMenu={(e) => handleRightClick(e, i)} className={styles.fret_position} style={{
+                                    overlaidConfigs.length > 0 && overlaidConfigs.map((c, i) => (
+                                        <button key={i} onContextMenu={(e) => handleRightClick(e, i)} className={styles.fret_position} style={{
                                             backgroundColor: c.color,
                                             opacity: 0.5,
                                             border: "1px solid transparent",

@@ -87,7 +87,7 @@ export const colourStyles: StylesConfig = {
     zIndex: 20,
     overflowX: 'hidden'
   }),
-  option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+  option: (styles, { data, isDisabled, isFocused, isSelected }: { data: any, isDisabled: boolean, isFocused: boolean, isSelected: boolean }) => {
     const color = chroma(data.color);
     return {
       ...styles,
@@ -111,7 +111,7 @@ export const colourStyles: StylesConfig = {
       },
     };
   },
-  singleValue: (styles, { data }) => {
+  singleValue: (styles, { data }: { data: any }) => {
     return { 
       ...styles, 
       ...dot(data.color),

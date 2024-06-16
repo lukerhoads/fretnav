@@ -32,7 +32,7 @@ const groupBadgeStyles = {
   lineHeight: '1',
   minWidth: 1,
   padding: '0.16666666666667em 0.5em',
-  textAlign: 'center',
+  textAlign: 'center' as const,
 };
 
 const formatGroupLabel = (data: any) => (
@@ -56,7 +56,7 @@ export default function Page() {
   const [userDefinedCategories, setUserDefinedCategories] = useState<string[]>([])
   const [activePattern, setActivePattern] = useState("None selected")
   const [activePatternMoveable, setActivePatternMoveable] = useState(false)
-  const [activePatternMutedStrings, setActivePatternMutedStrings] = useState([])
+  const [activePatternMutedStrings, setActivePatternMutedStrings] = useState<number[]>([])
   const [patternName, setPatternName] = useState("")
   const [patternCategory, setPatternCategory] = useState("")
   const [patternMoveable, setPatternMoveable] = useState(false)
@@ -285,7 +285,7 @@ export default function Page() {
                 <div className={styles.controller_selectors}>
                   <Select 
                     value={{ value: activePattern, label: activePattern }}
-                    onChange={(e, f) => (f.action == 'select-option' && e && e.value) && setActivePattern(e.value)}
+                    onChange={(e: any, f) => (f.action == 'select-option' && e && e.value) && setActivePattern(e.value)}
                     formatGroupLabel={formatGroupLabel} 
                     options={defaultGroupedOptions.concat({ label: "User Defined", options: userDefinedPatterns.map(p => ({ value: p.name, label: p.name })) })}
                     styles={customSelectStyles} 
@@ -302,7 +302,7 @@ export default function Page() {
                     <div className={styles.pattern_overlay} key={i}>
                       <Select 
                         value={{ value: patternOverlays[i], label: patternOverlays[i] }}
-                        onChange={(e, f) => (f.action == 'select-option' && e && e.value) && alterPatternOverlays(i, e.value)}
+                        onChange={(e: any, f) => (f.action == 'select-option' && e && e.value) && alterPatternOverlays(i, e.value)}
                         formatGroupLabel={formatGroupLabel} 
                         options={defaultGroupedOptions.concat({ label: "User Defined", options: userDefinedPatterns.map(p => ({ value: p.name, label: p.name })) })}
                         styles={customSelectStyles} 
