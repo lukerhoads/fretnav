@@ -38,8 +38,10 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
     const [dragging, setDragging] = useState(false)
     const [counter, setCounter] = useState<NodeJS.Timeout | null>(null)
     const bc = useRef<HTMLDivElement>(null)
-    let [positions, setPositions] = useState(initial_positions)
-    let [resizeConfig, setResizeConfig] = useState<ResizeConfig>(DEFAULT_RESIZE_CONFIG)
+    const [positions, setPositions] = useState(initial_positions)
+    const [resizeConfig, setResizeConfig] = useState<ResizeConfig>(DEFAULT_RESIZE_CONFIG)
+    const [stringGap, setStringGap] = useState(6)
+    const [fretGap, setFretGap] = useState(20)
     
     const handleRightClick = (e: any, idx: number) => {
         e.preventDefault()
@@ -83,6 +85,11 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
     }, [initial_positions])
 
     useEffect(() => {
+        setStringGap(resizeConfig.ending_string - resizeConfig.starting_string)
+        setFretGap(resizeConfig.ending_fret - resizeConfig.starting_fret)
+    }, [resizeConfig])
+
+    useEffect(() => {
         document.addEventListener("keydown", keyPressed);
         return () => {
             document.removeEventListener("keydown", keyPressed);
@@ -107,7 +114,7 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
                 let idealRectHeight = idealRectWidth / 1.45;
                 let idealFrets = Math.floor(rect.width / idealRectWidth)
                 let idealStrings = Math.floor(rect.height / idealRectHeight)
-                config.starting_fret = minFret - 1
+                config.starting_fret = minFret == 0 ? 0 : minFret - 1
                 if (idealFrets < (maxFret - minFret + 2)) {
                     // min fret - 1 starting
                     // max fret + 1 ending
@@ -119,7 +126,7 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
                 }
 
                 if (config.ending_fret > 20) config.ending_fret = 20
-                config.starting_string = minString - 1
+                config.starting_string = minString == 0 ? 0 : minString - 1
                 if (idealStrings < (maxString - minString + 2)) {
                     // min fret - 1 starting
                     // max fret + 1 ending
@@ -130,6 +137,8 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
                     // min fret - 1 + idealFrets ending
                 }
 
+                console.log(config)
+                // console.log(config.starting_string * (fretGap), (config.ending_string + 1)*(fretGap) - 1)
                 if (config.ending_string > 20) config.ending_string = 20
                 if (config.ending_fret > config.starting_fret && config.ending_string > config.starting_string) setResizeConfig(config)
             }
@@ -169,35 +178,35 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
     
     return (
         <div className={styles.fretboard} style={{
-            gridTemplateRows: `repeat(${resizeConfig.ending_string - resizeConfig.starting_string + 1}, auto)`,
-            gridTemplateColumns: `repeat(${resizeConfig.ending_fret - resizeConfig.starting_fret + 1}, auto)`
+            gridTemplateRows: `repeat(${stringGap + 1}, auto)`,
+            gridTemplateColumns: `repeat(${fretGap + 1}, auto)`
         }}>
             <div className={styles.fret_labels} style={{
-                gridTemplateColumns: `repeat(${resizeConfig.ending_fret - resizeConfig.starting_fret}, ${(100 / (resizeConfig.ending_fret - resizeConfig.starting_fret)).toFixed(5)}%)`,
-                gridColumn: `2 / span ${resizeConfig.ending_fret - resizeConfig.starting_fret}`
+                gridTemplateColumns: `repeat(${fretGap}, ${(100 / (fretGap)).toFixed(5)}%)`,
+                gridColumn: `2 / span ${fretGap}`
             }}>
                 {arrayRange(resizeConfig.starting_fret, resizeConfig.ending_fret - 1, 1).map((i) => 
                     <div key={i}><p>{i+1}</p></div>)}
             </div>
             <div className={styles.string_labels} style={{
-                gridTemplateRows: `repeat(${resizeConfig.ending_string - resizeConfig.starting_string + 1}, ${(100 / (resizeConfig.ending_string - resizeConfig.starting_string + 1)).toFixed(5)}%)`,
-                gridRow: `2 / span ${resizeConfig.ending_string - resizeConfig.starting_string}`
+                gridTemplateRows: `repeat(${stringGap + 1}, ${(100 / (stringGap + 1)).toFixed(5)}%)`,
+                gridRow: `2 / span ${stringGap}`
             }}>
                 {arrayRange(resizeConfig.starting_string, resizeConfig.ending_string - 1, 1).map((i) => 
                     <div key={i}><p className={mutedStrings.includes(i+1) ? styles.muted : ""}>{tuning[5-i]}</p></div>)}
             </div>
             <div className={styles.board_container} ref={bc} style={{
-                gridRow: `2 / span ${resizeConfig.ending_string - resizeConfig.starting_string}`,
-                gridColumn: `2 / span ${resizeConfig.ending_fret - resizeConfig.starting_fret}`
+                gridRow: `2 / span ${stringGap}`,
+                gridColumn: `2 / span ${fretGap}`
             }}>
                 <img src="/fretboard-markers.png" alt="board" className={styles.board_image} />
                 <div className={styles.board} style={{
-                    gridTemplateRows: `repeat(${resizeConfig.ending_string - resizeConfig.starting_string}, auto)`,
-                    gridTemplateColumns: `repeat(${resizeConfig.ending_fret - resizeConfig.starting_fret}, auto)`,
+                    gridTemplateRows: `repeat(${stringGap}, auto)`,
+                    gridTemplateColumns: `repeat(${fretGap}, auto)`,
                 }}>
-                    {arrayRange(resizeConfig.starting_string * (resizeConfig.ending_fret - resizeConfig.starting_fret), (resizeConfig.ending_string + 1)*(resizeConfig.ending_fret - resizeConfig.starting_fret) - 1, 1).map((i) => {
-                        let fret = resizeConfig.starting_fret + (i % (resizeConfig.ending_fret - resizeConfig.starting_fret) + 1) // i % 20 + 1
-                        let gt_string = resizeConfig.starting_string + Math.floor(i / (resizeConfig.ending_fret - resizeConfig.starting_fret)) // Math.floor(i / 20)
+                    {[ ...new Set(arrayRange(resizeConfig.starting_string, resizeConfig.ending_string, 1).map(i => arrayRange(i * 20, i * 20 + fretGap - 1, 1)).flat().filter(i => i < 140).filter(i => i >= 0)) ].map((i) => {
+                        let fret = i % 20 + 1 // resizeConfig.starting_fret + ((i % fretGap) + 1)
+                        let gt_string = Math.floor(i / 20) // resizeConfig.starting_string + Math.floor(i / fretGap)
                         let config = (dragging ? draggingPositions : positions).find(p => p.guitar_string == gt_string && p.fret == fret)
                         let overlaidConfigs = overlaidPatterns.map(p => p.positions.find(c => c.guitar_string == gt_string && c.fret == fret)).filter(c => c != undefined) as PositionConfig[]
                         let note = getNote(fret, gt_string, tuning)
@@ -206,6 +215,7 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
                             <div key={i} className={styles.fret_box} style={{
                                 borderTop: (gt_string - resizeConfig.starting_string) > 0 ? `3px solid ${string_muted}` : "1px solid black",
                             }}>
+                                {i}
                                 {gt_string < 6 && (
                                     config != undefined ? (
                                         <button disabled={dragging} onMouseDown={() => moveable && start(fret, gt_string)} onContextMenu={(e) => handleRightClick(e, i)} className={styles.fret_position} style={{
@@ -235,10 +245,10 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
                                         </button>
                                     ))
                                 )}
-                                {DOT_INDEXES.includes(gt_string * 20 + fret - 1) && (
+                                {DOT_INDEXES.includes(i /*gt_string * 20 + fret - 1*/ ) && (
                                     <div className={styles.dot} style={{
-                                        width: bc.current ? bc.current.getBoundingClientRect().width / (resizeConfig.ending_fret - resizeConfig.starting_fret) / 3 : '20px',
-                                        height: bc.current ? bc.current.getBoundingClientRect().width / (resizeConfig.ending_fret - resizeConfig.starting_fret) / 3 : '20px',
+                                        width: bc.current ? bc.current.getBoundingClientRect().width / (fretGap) / 3 : '20px',
+                                        height: bc.current ? bc.current.getBoundingClientRect().width / (fretGap) / 3 : '20px',
                                     }} />
                                 )}
                             </div>
