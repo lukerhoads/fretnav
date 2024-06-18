@@ -1,4 +1,4 @@
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Pattern, PositionConfig } from "@/types/pattern";
 import styles from "./fretboard.module.css"
 import useMousePosition from "@/app/hooks/useMousePosition";
@@ -15,6 +15,19 @@ const arrayRange = (start: number, stop: number, step: number) =>
     (value, index) => start + index * step
     );
 
+function useWindowSize() {
+    const [size, setSize] = useState([0, 0]);
+    useLayoutEffect(() => {
+        function updateSize() {
+            setSize([window.innerWidth, window.innerHeight]);
+        }
+        window.addEventListener('resize', updateSize);
+        updateSize();
+        return () => window.removeEventListener('resize', updateSize);
+    }, []);
+    return size;
+}
+
 type Props = {
     tuning: string[],
     initial_positions: PositionConfig[],
@@ -30,6 +43,7 @@ type Props = {
 }
 
 const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positions = [], moveable = false, lefty = false, resizeToHighlight = false, showNotes = false, overlaidPatterns = [], onPositionAdd = () => {}, onPositionHighlight = () => {}, onPositionDelete = () => {} }: Props) => {
+    const [width, height] = useWindowSize()
     const mousePosition = useMousePosition()
     const [controllerString, setControllerString] = useState(-1)
     const [controllerFret, setControllerFret] = useState(-1)
@@ -101,9 +115,9 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
             if (bc.current && positions.length > 0) {
                 let config: ResizeConfig = {
                     starting_fret: 0,
-                    ending_fret: 0,
+                    ending_fret: 20,
                     starting_string: 0,
-                    ending_string: 0,
+                    ending_string: 6,
                 }
                 const rect = bc.current.getBoundingClientRect()
                 let minFret = Math.min(...positions.map(p => p.fret))
@@ -139,13 +153,13 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
 
                 console.log(config)
                 // console.log(config.starting_string * (fretGap), (config.ending_string + 1)*(fretGap) - 1)
-                if (config.ending_string > 20) config.ending_string = 20
+                if (config.ending_string > 6) config.ending_string = 6
                 if (config.ending_fret > config.starting_fret && config.ending_string > config.starting_string) setResizeConfig(config)
             }
         } else {
             setResizeConfig(DEFAULT_RESIZE_CONFIG)
         }
-    }, [resizeToHighlight, bc, positions])
+    }, [resizeToHighlight, bc, positions, width])
 
     useEffect(() => {
         if (dragging && draggingPositions.length > 0 && mousePosition != null && mousePosition.x != null && mousePosition.y != null && bc.current) {
@@ -215,7 +229,6 @@ const Fretboard = ({ tuning = DEFAULT_TUNING, mutedStrings = [], initial_positio
                             <div key={i} className={styles.fret_box} style={{
                                 borderTop: (gt_string - resizeConfig.starting_string) > 0 ? `3px solid ${string_muted}` : "1px solid black",
                             }}>
-                                {i}
                                 {gt_string < 6 && (
                                     config != undefined ? (
                                         <button disabled={dragging} onMouseDown={() => moveable && start(fret, gt_string)} onContextMenu={(e) => handleRightClick(e, i)} className={styles.fret_position} style={{
