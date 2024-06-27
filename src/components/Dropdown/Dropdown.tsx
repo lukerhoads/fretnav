@@ -1,7 +1,5 @@
 // https://www.w3schools.com/css/css_dropdowns.asp
 
-const Dropdown = () => {
+const Dropdown = () => {};
 
-}
-
-export default Dropdown
+export default Dropdown;

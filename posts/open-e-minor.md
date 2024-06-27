@@ -1,7 +1,7 @@
 ---
-title: 'How to Play Open E minor'
-date: '2024-06-20'
-pattern: 'open-e-minor'
+title: "How to Play Open E minor"
+date: "2024-06-20"
+pattern: "open-e-minor"
 ---
 
 The Open E minor chord is an essential chord for beginner guitarists. Like the Open E chord, it forms part of the open chords collection, which acts as a foundation for learning barre chords and understanding the CAGED system. Mastering these chords will pave the way for playing chords across the entire fretboard.

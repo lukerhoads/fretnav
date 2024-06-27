@@ -1,7 +1,7 @@
 ---
-title: 'How to Play Open E'
-date: '2024-06-13'
-pattern: 'open-e'
+title: "How to Play Open E"
+date: "2024-06-13"
+pattern: "open-e"
 ---
 
 The Open E chord is an essential chord for all beginner guitarists. Being part of the open chords family, it forms the basis of many more complex barre chords you'll learn later on. Understanding these open chords is crucial for mastering the CAGED system and navigating the fretboard efficiently.

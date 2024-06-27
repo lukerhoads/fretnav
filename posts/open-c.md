@@ -1,7 +1,7 @@
 ---
-title: 'How to Play Open C'
-date: '2024-10-05'
-pattern: 'open-c'
+title: "How to Play Open C"
+date: "2024-10-05"
+pattern: "open-c"
 ---
 
 The Open C chord is another fundamental chord all beginner guitarists should have in their repertoire. Like other open chords, its pattern provides a foundation for more advanced techniques and chord formations, such as those found in the CAGED system. Being comfortable with open chords like Open C will ease your transition into more complex playing.

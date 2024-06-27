@@ -1,107 +1,107 @@
 .controller {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 .controller_body {
-    border: 1px solid black;
-    border-bottom: none;
-    display: flex;
-    flex-direction: row;
-    padding: 10px;
+  border: 1px solid black;
+  border-bottom: none;
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
 }
 
 .controller_nav {
-    display: flex;
+  display: flex;
 }
 
 .controller_nav_item {
-    padding: 15px 50px;
-    border-top: 1px solid black;
-    border-left: 1px solid black;
+  padding: 15px 50px;
+  border-top: 1px solid black;
+  border-left: 1px solid black;
 }
 
 .controller_nav_item:last-of-type {
-    border-right: 1px solid black;
+  border-right: 1px solid black;
 }
 
 .controller_nav_item:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .controller_nav_item_active {
-    background-color: black;
+  background-color: black;
 }
 
 .controller_nav_item_active p {
-    color: white;
+  color: white;
 }
 
 .controller_navigator {
 }
 
 .controller_navigator p {
-    margin-top: 10px;
-} 
+  margin-top: 10px;
+}
 
 .controller_navigator_side {
-    width: 30%;
-    padding: 10px;
+  width: 30%;
+  padding: 10px;
 }
 
 .controller_button {
-    padding: 5px 20px;
-    border: 1.5px solid black;
-    font-weight: 600;
-    font-family: "articulat-cf", sans-serif;
-    font-size: 15px;
-    min-width: 30px;
+  padding: 5px 20px;
+  border: 1.5px solid black;
+  font-weight: 600;
+  font-family: "articulat-cf", sans-serif;
+  font-size: 15px;
+  min-width: 30px;
 }
 
 .controller_button_icon {
-    font-size: 25px;
-    padding: 5px;
+  font-size: 25px;
+  padding: 5px;
 }
 
 .controller_selectors {
-    margin-top: 6px;
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    flex-wrap: wrap;
+  margin-top: 6px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .controller_positions {
-    margin-top: 6px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-content: flex-start;
+  margin-top: 6px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-content: flex-start;
 }
 
 .pattern_overlay {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .create_popup {
-    position: absolute;
-    width: 400px;
-    height: 400px;
-    border: 1px solid black;
-    border-radius: 10px;
-    top: 50%;
-    background-color: white;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px;
-    z-index: 10;
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border: 1px solid black;
+  border-radius: 10px;
+  top: 50%;
+  background-color: white;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  z-index: 10;
 }
 
 .checkbox_container {
-    display: flex;
-    flex-direction: row;    
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 }

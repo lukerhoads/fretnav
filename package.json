@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "genblog": "npx tsc ./src/constants/patterns && node scripts/blog.js"
+    "genblog": "npx tsc ./src/constants/patterns && node scripts/blog.js",
+    "format": "npx prettier --write ."
   },
   "dependencies": {
     "backoff": "^2.5.0",
@@ -16,6 +17,7 @@
     "html2canvas": "^1.4.1",
     "markdown-to-jsx": "^7.4.7",
     "next": "14.2.3",
+    "prettier": "^3.3.2",
     "react": "^18",
     "react-dom": "^18",
     "react-select": "^5.8.0"

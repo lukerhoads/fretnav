@@ -1,0 +1,25 @@
+.timeline {
+  position: relative;
+  border: 1px solid black;
+  max-width: 800px;
+}
+
+.timeline_bg {
+  min-height: 200px;
+  display: grid;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.timeline_marker {
+  position: absolute;
+  background-color: red;
+  top: 0;
+  bottom: 0;
+}
+
+.timeline_resize {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}

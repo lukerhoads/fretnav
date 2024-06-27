@@ -1,7 +1,7 @@
 ---
-title: 'How to Play Open D'
-date: '2024-06-13'
-pattern: 'open-d'
+title: "How to Play Open D"
+date: "2024-06-13"
+pattern: "open-d"
 ---
 
 The Open D chord is one of the fundamental chords all beginner guitarists should know. It is a prime example of the open chords, which are integral as their patterns reoccur in barre chords later on. Mastering the open chords will facilitate learning CAGED and playing chords seamlessly across the fretboard.

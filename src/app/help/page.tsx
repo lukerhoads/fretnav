@@ -1,9 +1,5 @@
-import styles from './page.module.css'
+import styles from "./page.module.css";
 
 export default function Help() {
-    return (
-        <div>
-            Help
-        </div>
-    )
+  return <div>Help</div>;
 }

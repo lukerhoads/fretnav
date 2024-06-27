@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import styles from './layout.module.css'
-import Link from 'next/link'
+import styles from "./layout.module.css";
+import Link from "next/link";
 import { headers } from "next/headers";
 
 export const metadata: Metadata = {
   title: "FretNav",
-  description: "Easily navigate the guitar fretboard with this interactive tool.",
+  description:
+    "Easily navigate the guitar fretboard with this interactive tool.",
 };
 
 export default function RootLayout({
@@ -16,8 +17,8 @@ export default function RootLayout({
 }>) {
   const headersList = headers();
   // read the custom x-url header
-  const header_url = headersList.get('x-url') || "";
-  
+  const header_url = headersList.get("x-url") || "";
+
   return (
     <html lang="en">
       <head>
@@ -27,8 +28,8 @@ export default function RootLayout({
         <div className={styles.header}>
           <a href="/">
             <div className={styles.header_logo}>
-                <img src="/logo-icon-transparent.png" alt="logo" />
-                <p>FretNav</p>
+              <img src="/logo-icon-transparent.png" alt="logo" />
+              <p>FretNav</p>
             </div>
           </a>
           <div className={styles.header_nav}>
@@ -39,9 +40,11 @@ export default function RootLayout({
           </div>
         </div>
         {children}
-        {!header_url.includes("/app") && <div className={styles.footer}>
-          <p>Copyright 2024. All rights reserved.</p>
-        </div>}
+        {!header_url.includes("/app") && (
+          <div className={styles.footer}>
+            <p>Copyright 2024. All rights reserved.</p>
+          </div>
+        )}
       </body>
     </html>
   );

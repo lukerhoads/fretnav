@@ -1,15 +1,15 @@
 export type PositionConfig = {
-    guitar_string: number,
-    fret: number,
-    label: string,
-    color: string,
-    sync_to_note?: boolean
-}
+  guitar_string: number;
+  fret: number;
+  label: string;
+  color: string;
+  sync_to_note?: boolean;
+};
 
 export type Pattern = {
-    name: string,
-    moveable?: boolean
-    category?: string,
-    positions: PositionConfig[],
-    mutedStrings?: number[]
-} 
+  name: string;
+  moveable?: boolean;
+  category?: string;
+  positions: PositionConfig[];
+  mutedStrings?: number[];
+};

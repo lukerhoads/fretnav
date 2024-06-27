@@ -1,4 +1,4 @@
-# FretNav 
+# FretNav
 
 ![App](./resources/MainApp.png)
 

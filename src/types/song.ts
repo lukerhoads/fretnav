@@ -1,9 +1,11 @@
-import { Pattern } from "./pattern"
+import { Pattern } from "./pattern";
 
 // TODO add Sunset by Polyphia, Lemonade by Internet Money
 
 export type Song = {
-    name: string,
-    bpm: number,
-    progression: Pattern[]
-}
+  name: string;
+  description: string;
+  bpm: number;
+  progression: Pattern[];
+  thumbnail?: string;
+};

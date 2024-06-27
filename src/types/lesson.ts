@@ -1,5 +1,3 @@
-
-
 export type Lesson = {
-    name: string,
-}
+  name: string;
+};
