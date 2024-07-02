@@ -43,7 +43,8 @@ type Props = {
   showNotes?: boolean;
   mutedStrings?: number[];
   resizeToHighlight?: boolean;
-  relativeSemitonePosition: PositionConfig | null;
+  relativeSemitonePositionIndex: number | null;
+  shiftOnMove?: boolean;
   onPositionAdd?: (idx: number, note: string) => void;
   onPositionHighlight?: (idx: number, fret: number, string: number) => void;
   onPositionDelete?: (idx: number) => void;
@@ -58,7 +59,8 @@ const Fretboard = ({
   resizeToHighlight = false,
   showNotes = false,
   overlaidPatterns = [],
-  relativeSemitonePosition,
+  relativeSemitonePositionIndex,
+  shiftOnMove = false,
   onPositionAdd = () => {},
   onPositionHighlight = () => {},
   onPositionDelete = () => {},
@@ -82,6 +84,7 @@ const Fretboard = ({
   );
   const [stringGap, setStringGap] = useState(6);
   const [fretGap, setFretGap] = useState(20);
+  const [semitoneShift, setSemitoneShift] = useState(false);
 
   const handleRightClick = (e: any, idx: number) => {
     e.preventDefault();
@@ -117,6 +120,24 @@ const Fretboard = ({
       cleanUp();
     }
   };
+
+  useEffect(() => {
+    let semitoneOffset =
+      relativeSemitonePositionIndex != null &&
+      getSemitoneOffset(
+        controllerFret,
+        controllerString,
+        dragging && draggingPositions.length
+          ? draggingPositions[relativeSemitonePositionIndex].fret
+          : initial_positions[relativeSemitonePositionIndex].fret,
+        dragging && draggingPositions.length
+          ? draggingPositions[relativeSemitonePositionIndex].guitar_string
+          : initial_positions[relativeSemitonePositionIndex].guitar_string,
+        tuning,
+      );
+
+    setSemitoneShift(semitoneOffset != null && semitoneOffset != 0);
+  }, [controllerFret, controllerString]);
 
   useEffect(() => {
     setPositions([...initial_positions]);
@@ -318,7 +339,9 @@ const Fretboard = ({
             let fret = (i % 20) + 1; // resizeConfig.starting_fret + ((i % fretGap) + 1)
             let gt_string = Math.floor(i / 20); // resizeConfig.starting_string + Math.floor(i / fretGap)
             let config = (dragging ? draggingPositions : positions).find(
-              (p) => p.guitar_string == gt_string && p.fret == fret,
+              (p) =>
+                p.guitar_string == gt_string &&
+                p.fret + (shiftOnMove && gt_string < 2 ? 1 : 0) == fret,
             );
             let overlaidConfigs = overlaidPatterns
               .map((p) =>
@@ -332,6 +355,26 @@ const Fretboard = ({
               "rgba(0, 0, 0, " +
               (mutedStrings.includes(gt_string) ? 0.5 : 1) +
               ")";
+            let semitoneOffset =
+              relativeSemitonePositionIndex != null &&
+              getSemitoneOffset(
+                fret,
+                gt_string,
+                dragging && draggingPositions.length
+                  ? draggingPositions[relativeSemitonePositionIndex].fret
+                  : initial_positions[relativeSemitonePositionIndex].fret,
+                dragging && draggingPositions.length
+                  ? draggingPositions[relativeSemitonePositionIndex]
+                      .guitar_string
+                  : initial_positions[relativeSemitonePositionIndex]
+                      .guitar_string,
+                tuning,
+              ) - (semitoneShift ? 1 : 0);
+            if (semitoneOffset && semitoneOffset < 0)
+              semitoneOffset = 12 + semitoneOffset;
+            // if (config && semitoneOffset && controllerFret == fret && controllerString == gt_string && semitoneOffset != 0) {
+
+            // }
             return (
               <div
                 key={i}
@@ -343,39 +386,34 @@ const Fretboard = ({
                       : "1px solid black",
                 }}
               >
-                {relativeSemitonePosition && (
-                  <>
-                    <p
-                      style={{
-                        color: gt_string < 6 ? undefined : "transparent",
-                        zIndex: 1,
-                        position: "absolute",
-                      }}
-                      className={styles.note}
-                    >
-                      {getSemitoneOffset(
-                        fret,
-                        gt_string,
-                        relativeSemitonePosition.fret,
-                        relativeSemitonePosition.guitar_string,
-                        tuning,
-                      )}
-                    </p>
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "50%",
-                        // transform: "translateY(-50%)",
-                        width: "100%",
-                        height: "100%",
-                        backgroundColor:
-                          gt_string < 6
-                            ? `rgba(255, 165, 0, ${1 - getSemitoneOffset(fret, gt_string, relativeSemitonePosition.fret, relativeSemitonePosition.guitar_string, tuning) / 12})`
-                            : undefined,
-                      }}
-                    />
-                  </>
-                )}
+                {relativeSemitonePositionIndex != null &&
+                  semitoneOffset != null && (
+                    <>
+                      <p
+                        style={{
+                          color: gt_string < 6 ? undefined : "transparent",
+                          zIndex: 1,
+                          position: "absolute",
+                        }}
+                        className={styles.note}
+                      >
+                        {semitoneOffset}
+                      </p>
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          // transform: "translateY(-50%)",
+                          width: "100%",
+                          height: "100%",
+                          backgroundColor:
+                            gt_string < 6
+                              ? `rgba(255, 165, 0, ${1 - semitoneOffset / 12})`
+                              : undefined,
+                        }}
+                      />
+                    </>
+                  )}
                 {gt_string < 6 &&
                   (config != undefined ? (
                     <button
@@ -442,9 +480,10 @@ const Fretboard = ({
                       height: bc.current
                         ? bc.current.getBoundingClientRect().width / fretGap / 3
                         : "20px",
-                      backgroundColor: relativeSemitonePosition
-                        ? "black"
-                        : "lightgray",
+                      backgroundColor:
+                        relativeSemitonePositionIndex != null
+                          ? "black"
+                          : "lightgray",
                     }}
                   />
                 )}

@@ -12,4 +12,5 @@ export type Pattern = {
   category?: string;
   positions: PositionConfig[];
   mutedStrings?: number[];
+  shiftOnMove?: boolean;
 };

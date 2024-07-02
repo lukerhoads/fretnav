@@ -23,6 +23,7 @@ import { Song } from "@/types/song";
 import { Lesson } from "@/types/lesson";
 import Card from "@/components/Card/Card";
 import Timeline from "@/components/Timeline/Timeline";
+import usePitch from "@/utils/usePitch";
 
 const groupStyles = {
   display: "flex",
@@ -70,6 +71,8 @@ export default function Page() {
   const [activePatternMutedStrings, setActivePatternMutedStrings] = useState<
     number[]
   >([]);
+  const [activePatternShiftOnMove, setActivePatternShiftOnMove] =
+    useState(false);
   const [patternName, setPatternName] = useState("");
   const [patternCategory, setPatternCategory] = useState("");
   const [patternMoveable, setPatternMoveable] = useState(false);
@@ -83,8 +86,9 @@ export default function Page() {
   const [newMutedString, setNewMutedString] = useState("");
   const [songs, setSongs] = useState<Song[]>([]);
   const [lessons, setLessons] = useState<Lesson[]>([]);
-  const [relativeSemitonePosition, setRelativeSemitonePosition] =
-    useState<PositionConfig | null>(null);
+  const [shiftPatternOnMove, setShiftPatternOnMove] = useState(false);
+  const [relativeSemitonePositionIndex, setRelativeSemitonePositionIndex] =
+    useState<number | null>(null);
 
   const [songCreatorActive, setSongCreatorActive] = useState(false);
   const [songName, setSongName] = useState("");
@@ -92,6 +96,7 @@ export default function Page() {
   const [songBpm, setSongBpm] = useState(120);
 
   const [lessonCreatorActive, setLessonCreatorActive] = useState(false);
+  const pitchInfo = usePitch();
 
   const onPositionHighlight = (idx: number, fret: number, string: number) => {
     let idx_active = positions.findIndex(
@@ -163,6 +168,10 @@ export default function Page() {
       pattern.moveable = true;
     }
 
+    if (shiftPatternOnMove) {
+      pattern.shiftOnMove = true;
+    }
+
     if (activePatternMutedStrings.length > 0) {
       pattern.mutedStrings = activePatternMutedStrings;
     }
@@ -182,6 +191,8 @@ export default function Page() {
     setActivePattern("");
     setActivePatternMutedStrings([]);
     setNewMutedString("");
+    setActivePatternShiftOnMove(false);
+    setRelativeSemitonePositionIndex(null);
   };
 
   const incrementNumOverlays = () => {
@@ -255,6 +266,8 @@ export default function Page() {
         if (pattern.mutedStrings)
           setActivePatternMutedStrings(pattern.mutedStrings);
         else setActivePatternMutedStrings([]);
+        if (pattern.shiftOnMove) setActivePatternShiftOnMove(true);
+        else setActivePatternShiftOnMove(false);
         return;
       }
 
@@ -266,12 +279,20 @@ export default function Page() {
         if (pattern.mutedStrings)
           setActivePatternMutedStrings(pattern.mutedStrings);
         else setActivePatternMutedStrings([]);
+        if (pattern.shiftOnMove) setActivePatternShiftOnMove(true);
+        else setActivePatternShiftOnMove(false);
         return;
       }
     } else if (activePattern == "none") {
       setPositions([]);
     }
   }, [activePattern]);
+
+  useEffect(() => {
+    if (positions.length == 0) {
+      setRelativeSemitonePositionIndex(null);
+    }
+  }, [positions]);
 
   useEffect(() => {
     let desiredTab = searchParams.get("tab");
@@ -489,8 +510,8 @@ export default function Page() {
                         )
                       }
                       show_relative_semitones={
-                        relativeSemitonePosition != null &&
-                        relativeSemitonePosition == position
+                        relativeSemitonePositionIndex != null &&
+                        relativeSemitonePositionIndex == index
                       }
                       onDelete={() =>
                         setPositions(positions.filter((_, i) => i != index))
@@ -504,8 +525,8 @@ export default function Page() {
                       }
                       onRelativeSemitoneChange={(newRelativeSemitone) =>
                         newRelativeSemitone
-                          ? setRelativeSemitonePosition(position)
-                          : setRelativeSemitonePosition(null)
+                          ? setRelativeSemitonePositionIndex(index)
+                          : setRelativeSemitonePositionIndex(null)
                       }
                     />
                   ))}
@@ -579,13 +600,26 @@ export default function Page() {
                       </option>
                     ))}
                   </datalist>
-                  <label htmlFor="show_notes">Moveable</label>
+                  <label htmlFor="moveable">Moveable</label>
                   <input
                     id="moveable"
                     type="checkbox"
                     checked={patternMoveable}
                     onChange={() => setPatternMoveable(!patternMoveable)}
                   />
+                  {patternMoveable && (
+                    <>
+                      <label htmlFor="shiftOnMove">Shift On Move</label>
+                      <input
+                        id="shiftOnMove"
+                        type="checkbox"
+                        checked={shiftPatternOnMove}
+                        onChange={() =>
+                          setShiftPatternOnMove(!shiftPatternOnMove)
+                        }
+                      />
+                    </>
+                  )}
                   <button onClick={() => setCreateActive(false)}>Close</button>
                   <button
                     className={styles.controller_button}
@@ -677,6 +711,13 @@ export default function Page() {
               >
                 Create New Lesson
               </button>
+              <button
+                className={styles.controller_button}
+                onClick={() => pitchInfo.setup()}
+              >
+                Listen for pitch
+              </button>
+              {pitchInfo.pitch}
             </div>
           )}
           {activeControllerNavItem == "settings" && (
@@ -708,13 +749,14 @@ export default function Page() {
       <div ref={fretboardRef} className="display">
         <Fretboard
           showNotes={showNotes}
-          relativeSemitonePosition={relativeSemitonePosition}
+          relativeSemitonePositionIndex={relativeSemitonePositionIndex}
           mutedStrings={activePatternMutedStrings}
           tuning={tuning}
           initial_positions={positions}
           moveable={activePatternMoveable}
           lefty={lefty}
           overlaidPatterns={positionOverlays}
+          shiftOnMove={activePatternShiftOnMove}
           onPositionAdd={onPositionAdd}
           onPositionHighlight={onPositionHighlight}
           onPositionDelete={onPositionDelete}
