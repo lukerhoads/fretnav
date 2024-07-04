@@ -14,6 +14,122 @@ export const pattern_categories = [
 
 export const patterns: Pattern[] = [
   {
+    name: "Major 7 / 7",
+    positions: [
+      {
+        guitar_string: 0,
+        fret: 5,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 1,
+        fret: 5,
+        label: "5",
+        color: "#0E8BC4",
+      },
+      {
+        guitar_string: 2,
+        fret: 6,
+        label: "3",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 3,
+        fret: 6,
+        label: "7",
+        color: "#FA1A0D",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Major 7 Drop 5",
+    positions: [
+      {
+        guitar_string: 5,
+        fret: 3,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 2,
+        fret: 4,
+        label: "3",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 3,
+        fret: 4,
+        label: "7",
+        color: "#FA1A0D",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Minor 7 Drop 5",
+    positions: [
+      {
+        guitar_string: 5,
+        fret: 3,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 3,
+        fret: 3,
+        label: "b7",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 2,
+        fret: 3,
+        label: "b3",
+        color: "#FA1A0D",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Minor 7 / b7",
+    positions: [
+      {
+        guitar_string: 0,
+        fret: 3,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 1,
+        fret: 3,
+        label: "5",
+        color: "#0E8BC4",
+      },
+      {
+        guitar_string: 2,
+        fret: 3,
+        label: "b3",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 3,
+        fret: 3,
+        label: "b7",
+        color: "#FA1A0D",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
     name: "Major 9",
     positions: [
       {

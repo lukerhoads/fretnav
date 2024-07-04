@@ -123,6 +123,7 @@ export default function Page() {
   };
 
   const onPositionDelete = (idx: number) => {
+    // console.log("Deleting ", idx)
     let fret = (idx % 20) + 1;
     let string = Math.floor(idx / 20);
     setPositions(
