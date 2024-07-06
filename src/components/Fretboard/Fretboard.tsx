@@ -8,10 +8,15 @@ import {
 import { Pattern, PositionConfig } from "@/types/pattern";
 import styles from "./fretboard.module.css";
 import useMousePosition from "@/app/hooks/useMousePosition";
-import { getNote, getSemitoneOffset } from "@/utils/note";
+import {
+  getNote,
+  getNoteSemitoneOffset,
+  getSemitoneOffset,
+} from "@/utils/note";
 import { DEFAULT_TUNING } from "@/constants/notes";
 import { DEFAULT_RESIZE_CONFIG, ResizeConfig } from "@/types/resize";
 import { DOT_INDEXES } from "@/constants/styles";
+import { defaultScales } from "@/constants/scales";
 
 // TODO: shift to vertical after certain width achieved
 
@@ -41,6 +46,7 @@ type Props = {
   overlaidPatterns?: Pattern[];
   lefty?: boolean;
   showNotes?: boolean;
+  highlightedScale: string;
   mutedStrings?: number[];
   resizeToHighlight?: boolean;
   relativeSemitonePositionIndex: number | null;
@@ -57,6 +63,7 @@ const Fretboard = ({
   moveable = false,
   lefty = false,
   resizeToHighlight = false,
+  highlightedScale = "",
   showNotes = false,
   overlaidPatterns = [],
   relativeSemitonePositionIndex,
@@ -393,6 +400,18 @@ const Fretboard = ({
             // console.log(semitoneShift)
             if (semitoneOffset && semitoneOffset < 0)
               semitoneOffset = 12 + semitoneOffset;
+
+            let semitoneScaleOffset: number | null = null;
+            if (highlightedScale != "") {
+              let scale = defaultScales.find((s) => s.name == highlightedScale);
+              if (scale) {
+                let offset = scale.notes.indexOf(note);
+                let real_offset = getNoteSemitoneOffset(scale.notes[0], note);
+                if (offset != -1) {
+                  semitoneScaleOffset = real_offset;
+                }
+              }
+            }
             return (
               <div
                 key={i}
@@ -405,6 +424,7 @@ const Fretboard = ({
                 }}
               >
                 {relativeSemitonePositionIndex != null &&
+                  semitoneOffset &&
                   semitoneOffset != null && (
                     <>
                       <p
@@ -467,6 +487,22 @@ const Fretboard = ({
                       onClick={() => onPositionAdd(i, note)}
                     />
                   ))}
+                {gt_string < 6 &&
+                  highlightedScale != "" &&
+                  semitoneScaleOffset != null && (
+                    <button
+                      className={styles.fret_position}
+                      style={{
+                        backgroundColor:
+                          semitoneScaleOffset != null
+                            ? `rgba(255, 165, 0, ${1 - semitoneScaleOffset / 12})`
+                            : undefined,
+                      }}
+                      disabled={true}
+                    >
+                      {semitoneScaleOffset}
+                    </button>
+                  )}
                 {gt_string < 6 && showNotes && (
                   <p className={styles.note}>{note}</p>
                 )}

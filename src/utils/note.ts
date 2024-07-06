@@ -1,6 +1,9 @@
 import { NOTES } from "@/constants/notes";
 
-const shiftArrayCounterclockwise = (arr: any[], numTimes: number): any[] => {
+export const shiftArrayCounterclockwise = (
+  arr: any[],
+  numTimes: number,
+): any[] => {
   if (numTimes == 0) return arr;
   for (let i = 0; i < numTimes; i++) {
     let first = arr.shift();
@@ -28,4 +31,8 @@ export const getSemitoneOffset = (
   let note1 = getNote(fret1, string1, tuning);
   let note2 = getNote(fret2, string2, tuning);
   return shiftArrayCounterclockwise(NOTES, NOTES.indexOf(note2)).indexOf(note1);
+};
+
+export const getNoteSemitoneOffset = (note1: string, note2: string) => {
+  return shiftArrayCounterclockwise(NOTES, NOTES.indexOf(note1)).indexOf(note2);
 };

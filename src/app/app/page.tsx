@@ -24,6 +24,8 @@ import { Lesson } from "@/types/lesson";
 import Card from "@/components/Card/Card";
 import Timeline from "@/components/Timeline/Timeline";
 import usePitch from "@/utils/usePitch";
+import { createRoot } from "react-dom/client";
+import { defaultScalesOptions, userDefinedScales } from "@/constants/scales";
 
 const groupStyles = {
   display: "flex",
@@ -61,6 +63,7 @@ export default function Page() {
   const [lefty, setLefty] = useState(false);
   const [idxActive, setIdxActive] = useState(-1);
   const fretboardRef = useRef<HTMLDivElement>(null);
+  const fretboard2Ref = useRef<HTMLDivElement>(null);
   const [showNotes, setShowNotes] = useState(false);
   const [userDefinedPatterns, setUserDefinedPatterns] = useState<Pattern[]>([]);
   const [userDefinedCategories, setUserDefinedCategories] = useState<string[]>(
@@ -96,7 +99,18 @@ export default function Page() {
   const [songBpm, setSongBpm] = useState(120);
 
   const [lessonCreatorActive, setLessonCreatorActive] = useState(false);
+  const [lessonName, setLessonName] = useState("");
+  const [lessonPatterns, setLessonPatterns] = useState<Pattern[]>([]);
+  // const [lessonPatternImageUrls, setLessonPatternImageUrls] = useState<
+  //   string[]
+  // >([]);
+  const [lessonDescription, setLessonDescription] = useState("");
+  const [activeLessonPatternIndex, setActiveLessonPatternIndex] = useState<
+    number | null
+  >(null);
   const pitchInfo = usePitch();
+
+  const [activeScale, setActiveScale] = useState("");
 
   const onPositionHighlight = (idx: number, fret: number, string: number) => {
     let idx_active = positions.findIndex(
@@ -131,16 +145,57 @@ export default function Page() {
     );
   };
 
-  const downloadFretboardImage = async () => {
-    const element = fretboardRef.current;
+  const getFretboardImageURL = async () => {
+    let element = fretboardRef.current;
     if (element == null) return;
+    console.log("Element: ", element);
     const canvas = await html2canvas(element);
+    console.log("Canvas: ", canvas);
     const data = canvas.toDataURL("image/jpg");
+    console.log("Data: ", data);
+    return data;
+  };
+
+  const updateFretboardImageCanvas = async () => {
+    // let element = fretboardRef.current
+    // if (fretboard2Ref && fretboard2Ref.current) {
+    //   fretboard2Ref.current.innerHTML = "";
+    //   let fretboardContainer = document.createElement("div")
+    //   fretboard2Ref.current.appendChild(fretboardContainer)
+    //   let root = createRoot(fretboardContainer!);
+    //   root.render(
+    //     <Fretboard
+    //       relativeSemitonePositionIndex={null}
+    //       mutedStrings={activePatternMutedStrings}
+    //       tuning={["E", "A", "D", "G", "B", "E"]}
+    //       initial_positions={positions}
+    //       moveable={false}
+    //       lefty={false}
+    //     />,
+    //   );
+    // }
+    // if (element == null) return;
+    // console.log("Element: ", element)
+    // const canvas = await html2canvas(element);
+    // const data = canvas.toDataURL("image/jpg");
+    let url = await getFretboardImageURL();
+    let img = document.createElement("img");
+    if (url) img.src = url;
+    let elem = document.getElementById(
+      `lesson-pattern-${activeLessonPatternIndex}`,
+    );
+    if (elem) {
+      elem.innerHTML = "";
+      elem.appendChild(img);
+    }
+  };
+
+  const downloadFretboardImage = async () => {
+    const data = await getFretboardImageURL();
     const link = document.createElement("a");
-    if (typeof link.download === "string") {
+    if (typeof link.download === "string" && data) {
       link.href = data;
       link.download = "image.jpg";
-
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -237,6 +292,13 @@ export default function Page() {
   };
 
   useEffect(() => {
+    if (activeLessonPatternIndex != null) {
+      setActivePattern(lessonPatterns[activeLessonPatternIndex].name);
+      setPositions(lessonPatterns[activeLessonPatternIndex].positions);
+    }
+  }, [activeLessonPatternIndex]);
+
+  useEffect(() => {
     let newPatternOverlays: Pattern[] = [];
     patternOverlays.forEach((p) => {
       if (p != "none") {
@@ -293,6 +355,14 @@ export default function Page() {
     if (positions.length == 0) {
       setRelativeSemitonePositionIndex(null);
     }
+
+    console.log("Active lesson pattern: ", activeLessonPatternIndex);
+    if (activeLessonPatternIndex != null) {
+      let newLessonPatterns = [...lessonPatterns];
+      newLessonPatterns[activeLessonPatternIndex].positions = positions;
+      setLessonPatterns(newLessonPatterns);
+      updateFretboardImageCanvas();
+    }
   }, [positions]);
 
   useEffect(() => {
@@ -331,438 +401,525 @@ export default function Page() {
   }, [userDefinedPatterns]);
 
   return (
-    <main>
-      <div className={styles.controller}>
-        <div className={styles.controller_nav}>
-          <div
-            className={
-              styles.controller_nav_item +
-              (activeControllerNavItem == "navigator"
-                ? " " + styles.controller_nav_item_active
-                : "")
-            }
-            onClick={() => setActiveControllerNavItem("navigator")}
-          >
-            <p>Navigator</p>
+    <main
+      style={{
+        position: "relative",
+      }}
+    >
+      <div style={{ overflow: "hidden" }}>
+        <div className={styles.controller}>
+          <div className={styles.controller_nav}>
+            <div
+              className={
+                styles.controller_nav_item +
+                (activeControllerNavItem == "navigator"
+                  ? " " + styles.controller_nav_item_active
+                  : "")
+              }
+              onClick={() => setActiveControllerNavItem("navigator")}
+            >
+              <p>Navigator</p>
+            </div>
+            <div
+              className={
+                styles.controller_nav_item +
+                (activeControllerNavItem == "songs"
+                  ? " " + styles.controller_nav_item_active
+                  : "")
+              }
+              onClick={() => setActiveControllerNavItem("songs")}
+            >
+              <p>Songs</p>
+            </div>
+            <div
+              className={
+                styles.controller_nav_item +
+                (activeControllerNavItem == "lessons"
+                  ? " " + styles.controller_nav_item_active
+                  : "")
+              }
+              onClick={() => setActiveControllerNavItem("lessons")}
+            >
+              <p>Lessons</p>
+            </div>
+            <div
+              className={
+                styles.controller_nav_item +
+                (activeControllerNavItem == "settings"
+                  ? " " + styles.controller_nav_item_active
+                  : "")
+              }
+              onClick={() => setActiveControllerNavItem("settings")}
+            >
+              <p>Settings</p>
+            </div>
           </div>
-          <div
-            className={
-              styles.controller_nav_item +
-              (activeControllerNavItem == "songs"
-                ? " " + styles.controller_nav_item_active
-                : "")
-            }
-            onClick={() => setActiveControllerNavItem("songs")}
-          >
-            <p>Songs</p>
-          </div>
-          <div
-            className={
-              styles.controller_nav_item +
-              (activeControllerNavItem == "lessons"
-                ? " " + styles.controller_nav_item_active
-                : "")
-            }
-            onClick={() => setActiveControllerNavItem("lessons")}
-          >
-            <p>Lessons</p>
-          </div>
-          <div
-            className={
-              styles.controller_nav_item +
-              (activeControllerNavItem == "settings"
-                ? " " + styles.controller_nav_item_active
-                : "")
-            }
-            onClick={() => setActiveControllerNavItem("settings")}
-          >
-            <p>Settings</p>
-          </div>
-        </div>
-        <div className={styles.controller_body}>
-          {activeControllerNavItem == "navigator" && (
-            <>
-              <div className={styles.controller_navigator}>
-                <p>Pattern</p>
-                <div className={styles.controller_selectors}>
-                  <Select
-                    value={{ value: activePattern, label: activePattern }}
-                    onChange={(e: any, f) =>
-                      f.action == "select-option" &&
-                      e &&
-                      e.value &&
-                      setActivePattern(e.value)
-                    }
-                    formatGroupLabel={formatGroupLabel}
-                    options={defaultGroupedOptions.concat({
-                      label: "User Defined",
-                      options: userDefinedPatterns.map((p) => ({
-                        value: p.name,
-                        label: p.name,
-                      })),
-                    })}
-                    styles={customSelectStyles}
-                  />
-                  <button
-                    className={styles.controller_button}
-                    onClick={() => clearFretboard()}
-                  >
-                    Clear
-                  </button>
-                  <button
-                    className={styles.controller_button}
-                    onClick={downloadFretboardImage}
-                  >
-                    Download Fretboard Image
-                  </button>
-                  <button
-                    className={styles.controller_button}
-                    onClick={() => console.log(positions)}
-                  >
-                    Print Pattern
-                  </button>
-                  <button
-                    className={styles.controller_button}
-                    onClick={() =>
-                      shareElement(activeControllerNavItem, activePattern)
-                    }
-                  >
-                    Share Pattern
-                  </button>
-                  {positions.length > 0 && (
+          <div className={styles.controller_body}>
+            {activeControllerNavItem == "navigator" && (
+              <>
+                <div className={styles.controller_navigator}>
+                  <p>Pattern</p>
+                  <div className={styles.controller_selectors}>
+                    <Select
+                      value={{ value: activePattern, label: activePattern }}
+                      onChange={(e: any, f) =>
+                        f.action == "select-option" &&
+                        e &&
+                        e.value &&
+                        setActivePattern(e.value)
+                      }
+                      formatGroupLabel={formatGroupLabel}
+                      options={defaultGroupedOptions.concat({
+                        label: "User Defined",
+                        options: userDefinedPatterns.map((p) => ({
+                          value: p.name,
+                          label: p.name,
+                        })),
+                      })}
+                      styles={customSelectStyles}
+                    />
                     <button
                       className={styles.controller_button}
-                      onClick={() => setCreateActive(true)}
+                      onClick={() => clearFretboard()}
                     >
-                      Create Pattern
+                      Clear
                     </button>
-                  )}
-                </div>
-                <p>Pattern Overlays</p>
-                <div className={styles.controller_selectors}>
-                  {Array.from(Array(numOverlays).keys()).map((i) => (
-                    <div className={styles.pattern_overlay} key={i}>
-                      <Select
-                        value={{
-                          value: patternOverlays[i],
-                          label: patternOverlays[i],
-                        }}
-                        onChange={(e: any, f) =>
-                          f.action == "select-option" &&
-                          e &&
-                          e.value &&
-                          alterPatternOverlays(i, e.value)
-                        }
-                        formatGroupLabel={formatGroupLabel}
-                        options={defaultGroupedOptions.concat({
-                          label: "User Defined",
-                          options: userDefinedPatterns.map((p) => ({
-                            value: p.name,
-                            label: p.name,
-                          })),
-                        })}
-                        styles={customSelectStyles}
-                      />
-                      <button onClick={() => makeOverlayActive(i)}>SW</button>
-                    </div>
-                  ))}
-                  <button
-                    className={
-                      styles.controller_button +
-                      " " +
-                      styles.controller_button_icon
-                    }
-                    onClick={() => incrementNumOverlays()}
-                  >
-                    +
-                  </button>
-                  <button
-                    className={
-                      styles.controller_button +
-                      " " +
-                      styles.controller_button_icon
-                    }
-                    onClick={() => decrementNumOverlays()}
-                  >
-                    -
-                  </button>
-                  <button
-                    className={styles.controller_button}
-                    onClick={() => clearOverlays()}
-                  >
-                    Clear
-                  </button>
-                </div>
-                <p>Positions {activePatternMoveable ? "(Moveable)" : ""}</p>
-                <div className={styles.controller_positions}>
-                  {positions.map((position, index) => (
-                    <Position
-                      key={index}
-                      moveable={activePatternMoveable}
-                      highlighted={index == idxActive}
-                      {...position}
-                      tuning={tuning}
-                      onLabelChange={(label) =>
-                        label.length < 3 &&
-                        setPositions(
-                          positions.map((p, i) =>
-                            i == index ? { ...p, label } : p,
-                          ),
-                        )
+                    <button
+                      className={styles.controller_button}
+                      onClick={downloadFretboardImage}
+                    >
+                      Download Fretboard Image
+                    </button>
+                    <button
+                      className={styles.controller_button}
+                      onClick={() => console.log(positions)}
+                    >
+                      Print Pattern
+                    </button>
+                    <button
+                      className={styles.controller_button}
+                      onClick={() =>
+                        shareElement(activeControllerNavItem, activePattern)
                       }
-                      show_relative_semitones={
-                        relativeSemitonePositionIndex != null &&
-                        relativeSemitonePositionIndex == index
-                      }
-                      onDelete={() =>
-                        setPositions(positions.filter((_, i) => i != index))
-                      }
-                      onColorChange={(color) =>
-                        setPositions(
-                          positions.map((p, i) =>
-                            i == index ? { ...p, color } : p,
-                          ),
-                        )
-                      }
-                      onRelativeSemitoneChange={(newRelativeSemitone) =>
-                        newRelativeSemitone
-                          ? setRelativeSemitonePositionIndex(index)
-                          : setRelativeSemitonePositionIndex(null)
-                      }
-                    />
-                  ))}
-                  {positions.length == 0 && <p>No positions</p>}
-                </div>
-                <p>
-                  Muted Strings{" "}
-                  {activePatternMutedStrings.map((string, i) => (
-                    <p key={i}>{string}</p>
-                  ))}
-                </p>
-                {activePatternMutedStrings.length == 0 && (
-                  <p>No muted strings</p>
-                )}
-                <div className={styles.controller_selectors}>
-                  <input
-                    type="text"
-                    placeholder="New Muted String"
-                    onChange={(e) => setNewMutedString(e.target.value)}
-                  />
-                  <button
-                    className={
-                      styles.controller_button +
-                      " " +
-                      styles.controller_button_icon
-                    }
-                    onClick={() =>
-                      Number(newMutedString)
-                        ? setActivePatternMutedStrings([
-                            ...activePatternMutedStrings,
-                            Number(newMutedString),
-                          ])
-                        : setError("Invalid new muted string")
-                    }
-                  >
-                    +
-                  </button>
-                  <button
-                    className={
-                      styles.controller_button +
-                      " " +
-                      styles.controller_button_icon
-                    }
-                    onClick={() =>
-                      setActivePatternMutedStrings(
-                        activePatternMutedStrings.slice(0, -1),
-                      )
-                    }
-                  >
-                    -
-                  </button>
-                </div>
-              </div>
-              {createActive && (
-                <div className={styles.create_popup}>
-                  <p>Create new pattern</p>
-                  <input
-                    type="text"
-                    placeholder="Pattern name"
-                    onChange={(e) => setPatternName(e.target.value)}
-                  />
-                  <input
-                    placeholder="Category"
-                    list="category"
-                    onChange={(e) => setPatternCategory(e.target.value)}
-                  />
-                  <datalist id="category">
-                    {userDefinedCategories.map((c, i) => (
-                      <option key={i} value={c}>
-                        {c}
-                      </option>
+                    >
+                      Share Pattern
+                    </button>
+                    {positions.length > 0 && (
+                      <button
+                        className={styles.controller_button}
+                        onClick={() => setCreateActive(true)}
+                      >
+                        Create Pattern
+                      </button>
+                    )}
+                  </div>
+                  <p>Pattern Overlays</p>
+                  <div className={styles.controller_selectors}>
+                    {Array.from(Array(numOverlays).keys()).map((i) => (
+                      <div className={styles.pattern_overlay} key={i}>
+                        <Select
+                          value={{
+                            value: patternOverlays[i],
+                            label: patternOverlays[i],
+                          }}
+                          onChange={(e: any, f) =>
+                            f.action == "select-option" &&
+                            e &&
+                            e.value &&
+                            alterPatternOverlays(i, e.value)
+                          }
+                          formatGroupLabel={formatGroupLabel}
+                          options={defaultGroupedOptions.concat({
+                            label: "User Defined",
+                            options: userDefinedPatterns.map((p) => ({
+                              value: p.name,
+                              label: p.name,
+                            })),
+                          })}
+                          styles={customSelectStyles}
+                        />
+                        <button onClick={() => makeOverlayActive(i)}>SW</button>
+                      </div>
                     ))}
-                  </datalist>
-                  <label htmlFor="moveable">Moveable</label>
-                  <input
-                    id="moveable"
-                    type="checkbox"
-                    checked={patternMoveable}
-                    onChange={() => setPatternMoveable(!patternMoveable)}
-                  />
-                  {patternMoveable && (
-                    <>
-                      <label htmlFor="shiftOnMove">Shift On Move</label>
-                      <input
-                        id="shiftOnMove"
-                        type="checkbox"
-                        checked={shiftPatternOnMove}
-                        onChange={() =>
-                          setShiftPatternOnMove(!shiftPatternOnMove)
+                    <button
+                      className={
+                        styles.controller_button +
+                        " " +
+                        styles.controller_button_icon
+                      }
+                      onClick={() => incrementNumOverlays()}
+                    >
+                      +
+                    </button>
+                    <button
+                      className={
+                        styles.controller_button +
+                        " " +
+                        styles.controller_button_icon
+                      }
+                      onClick={() => decrementNumOverlays()}
+                    >
+                      -
+                    </button>
+                    <button
+                      className={styles.controller_button}
+                      onClick={() => clearOverlays()}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                  <p>Positions {activePatternMoveable ? "(Moveable)" : ""}</p>
+                  <div className={styles.controller_positions}>
+                    {positions.map((position, index) => (
+                      <Position
+                        key={index}
+                        moveable={activePatternMoveable}
+                        highlighted={index == idxActive}
+                        {...position}
+                        tuning={tuning}
+                        onLabelChange={(label) =>
+                          label.length < 3 &&
+                          setPositions(
+                            positions.map((p, i) =>
+                              i == index ? { ...p, label } : p,
+                            ),
+                          )
+                        }
+                        show_relative_semitones={
+                          relativeSemitonePositionIndex != null &&
+                          relativeSemitonePositionIndex == index
+                        }
+                        onDelete={() =>
+                          setPositions(positions.filter((_, i) => i != index))
+                        }
+                        onColorChange={(color) =>
+                          setPositions(
+                            positions.map((p, i) =>
+                              i == index ? { ...p, color } : p,
+                            ),
+                          )
+                        }
+                        onRelativeSemitoneChange={(newRelativeSemitone) =>
+                          newRelativeSemitone
+                            ? setRelativeSemitonePositionIndex(index)
+                            : setRelativeSemitonePositionIndex(null)
                         }
                       />
-                    </>
+                    ))}
+                    {positions.length == 0 && <p>No positions</p>}
+                  </div>
+                  <p>
+                    Muted Strings{" "}
+                    {activePatternMutedStrings.map((string, i) => (
+                      <p key={i}>{string}</p>
+                    ))}
+                  </p>
+                  {activePatternMutedStrings.length == 0 && (
+                    <p>No muted strings</p>
                   )}
-                  <button onClick={() => setCreateActive(false)}>Close</button>
-                  <button
-                    className={styles.controller_button}
-                    onClick={createNewPattern}
-                  >
-                    Save Pattern
-                  </button>
+                  <div className={styles.controller_selectors}>
+                    <input
+                      type="text"
+                      placeholder="New Muted String"
+                      onChange={(e) => setNewMutedString(e.target.value)}
+                    />
+                    <button
+                      className={
+                        styles.controller_button +
+                        " " +
+                        styles.controller_button_icon
+                      }
+                      onClick={() =>
+                        Number(newMutedString)
+                          ? setActivePatternMutedStrings([
+                              ...activePatternMutedStrings,
+                              Number(newMutedString),
+                            ])
+                          : setError("Invalid new muted string")
+                      }
+                    >
+                      +
+                    </button>
+                    <button
+                      className={
+                        styles.controller_button +
+                        " " +
+                        styles.controller_button_icon
+                      }
+                      onClick={() =>
+                        setActivePatternMutedStrings(
+                          activePatternMutedStrings.slice(0, -1),
+                        )
+                      }
+                    >
+                      -
+                    </button>
+                  </div>
                 </div>
-              )}
-            </>
-          )}
+                {createActive && (
+                  <div className={styles.create_popup}>
+                    <p>Create new pattern</p>
+                    <input
+                      type="text"
+                      placeholder="Pattern name"
+                      onChange={(e) => setPatternName(e.target.value)}
+                    />
+                    <input
+                      placeholder="Category"
+                      list="category"
+                      onChange={(e) => setPatternCategory(e.target.value)}
+                    />
+                    <datalist id="category">
+                      {userDefinedCategories.map((c, i) => (
+                        <option key={i} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                    </datalist>
+                    <label htmlFor="moveable">Moveable</label>
+                    <input
+                      id="moveable"
+                      type="checkbox"
+                      checked={patternMoveable}
+                      onChange={() => setPatternMoveable(!patternMoveable)}
+                    />
+                    {patternMoveable && (
+                      <>
+                        <label htmlFor="shiftOnMove">Shift On Move</label>
+                        <input
+                          id="shiftOnMove"
+                          type="checkbox"
+                          checked={shiftPatternOnMove}
+                          onChange={() =>
+                            setShiftPatternOnMove(!shiftPatternOnMove)
+                          }
+                        />
+                      </>
+                    )}
+                    <button onClick={() => setCreateActive(false)}>
+                      Close
+                    </button>
+                    <button
+                      className={styles.controller_button}
+                      onClick={createNewPattern}
+                    >
+                      Save Pattern
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
 
-          {activeControllerNavItem == "songs" && (
-            <div className="controller-songs">
-              {songs.length > 0 ? (
-                songs.map((song, i) => (
-                  <Card
-                    key={i}
-                    img={song.thumbnail}
-                    title={song.name}
-                    subtitle={song.description}
-                  />
-                ))
-              ) : (
-                <p>No songs</p>
-              )}
-              {songCreatorActive && (
-                <>
+            {activeControllerNavItem == "songs" && (
+              <div className="controller-songs">
+                {songs.length > 0 ? (
+                  songs.map((song, i) => (
+                    <Card
+                      key={i}
+                      img={song.thumbnail}
+                      title={song.name}
+                      subtitle={song.description}
+                    />
+                  ))
+                ) : (
+                  <p>No songs</p>
+                )}
+                {songCreatorActive && (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="Song name"
+                      onChange={(e) => setSongName(e.target.value)}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Song description"
+                      onChange={(e) => setSongDescription(e.target.value)}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Song bpm"
+                      onChange={(e) => {
+                        // todo: validate number
+                        setSongBpm(parseInt(e.target.value));
+                      }}
+                    />
+                    <button onClick={() => setSongCreatorActive(false)}>
+                      Close
+                    </button>
+                    <Timeline
+                      bpm={songBpm}
+                      measures={[]}
+                      setActiveMeasure={() => {}}
+                    />
+                  </>
+                )}
+                <button
+                  className={styles.controller_button}
+                  onClick={() => setSongCreatorActive(true)}
+                >
+                  Create New Song
+                </button>
+              </div>
+            )}
+            {activeControllerNavItem == "lessons" && (
+              <div className="controller-lessons">
+                {lessons.length > 0 ? (
+                  lessons.map((lesson, i) => (
+                    <Card
+                      key={i}
+                      img={undefined}
+                      title={lesson.name}
+                      subtitle={""}
+                    />
+                  ))
+                ) : (
+                  <p>No lessons</p>
+                )}
+                {lessonCreatorActive && (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="Lesson name"
+                      onChange={(e) => setLessonName(e.target.value)}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Lesson description"
+                      onChange={(e) => setLessonDescription(e.target.value)}
+                    />
+                    <div className={styles.lesson_patterns}>
+                      {lessonPatterns.map((p, i) => (
+                        <div
+                          key={i}
+                          className={styles.lesson_pattern}
+                          onClick={() => setActiveLessonPatternIndex(i)}
+                        >
+                          {p.positions.length > 0 ? (
+                            <div id={`lesson-pattern-${i}`}></div>
+                          ) : (
+                            <img src={"blank-fretboard.jpg"} alt={p.name} />
+                          )}
+                          <input
+                            type="text"
+                            value={p.name}
+                            onChange={(e) => {
+                              let newPatterns = [...lessonPatterns];
+                              newPatterns[i].name = e.target.value;
+                              setLessonPatterns(newPatterns);
+                            }}
+                          />
+                          <button
+                            onClick={() => {
+                              let newPatterns = [...lessonPatterns];
+                              newPatterns.splice(i, 1);
+                              setLessonPatterns(newPatterns);
+                              setActiveLessonPatternIndex(
+                                lessonPatterns.length,
+                              );
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      ))}
+                      <div
+                        className={styles.lesson_pattern}
+                        onClick={() => {
+                          setLessonPatterns([
+                            ...lessonPatterns,
+                            { name: "", positions: [] },
+                          ]);
+                          setActiveLessonPatternIndex(lessonPatterns.length);
+                        }}
+                      >
+                        <p>+</p>
+                      </div>
+                    </div>
+                    <button onClick={() => setLessonCreatorActive(false)}>
+                      Close
+                    </button>
+                  </>
+                )}
+                <button
+                  className={styles.controller_button}
+                  onClick={() => setLessonCreatorActive(true)}
+                >
+                  Create New Lesson
+                </button>
+                <button
+                  className={styles.controller_button}
+                  onClick={() => pitchInfo.setup()}
+                >
+                  Listen for pitch
+                </button>
+                {pitchInfo.pitch}
+              </div>
+            )}
+            {activeControllerNavItem == "settings" && (
+              <div className="controller-settings">
+                <div className={styles.checkbox_container}>
+                  <p>Show notes</p>
                   <input
-                    type="text"
-                    placeholder="Song name"
-                    onChange={(e) => setSongName(e.target.value)}
+                    id="show_notes"
+                    type="checkbox"
+                    checked={showNotes}
+                    onChange={() => setShowNotes(!showNotes)}
                   />
+                </div>
+                <div className={styles.checkbox_container}>
+                  <p>Lefty (Coming Soon)</p>
                   <input
-                    type="text"
-                    placeholder="Song description"
-                    onChange={(e) => setSongDescription(e.target.value)}
+                    id="show_notes"
+                    type="checkbox"
+                    checked={lefty}
+                    onChange={() => setLefty(!lefty)}
                   />
-                  <input
-                    type="text"
-                    placeholder="Song bpm"
-                    onChange={(e) => {
-                      // todo: validate number
-                      setSongBpm(parseInt(e.target.value));
-                    }}
-                  />
-                  <button onClick={() => setSongCreatorActive(false)}>
-                    Close
-                  </button>
-                  <Timeline
-                    bpm={songBpm}
-                    measures={[]}
-                    setActiveMeasure={() => {}}
-                  />
-                </>
-              )}
-              <button
-                className={styles.controller_button}
-                onClick={() => setSongCreatorActive(true)}
-              >
-                Create New Song
-              </button>
-            </div>
-          )}
-          {activeControllerNavItem == "lessons" && (
-            <div className="controller-lessons">
-              {lessons.length > 0 ? (
-                lessons.map((lesson, i) => (
-                  <Card
-                    key={i}
-                    img={undefined}
-                    title={lesson.name}
-                    subtitle={""}
-                  />
-                ))
-              ) : (
-                <p>No lessons</p>
-              )}
-              {lessonCreatorActive && (
-                <>
-                  <button onClick={() => setLessonCreatorActive(false)}>
-                    Close
-                  </button>
-                </>
-              )}
-              <button
-                className={styles.controller_button}
-                onClick={() => setLessonCreatorActive(true)}
-              >
-                Create New Lesson
-              </button>
-              <button
-                className={styles.controller_button}
-                onClick={() => pitchInfo.setup()}
-              >
-                Listen for pitch
-              </button>
-              {pitchInfo.pitch}
-            </div>
-          )}
-          {activeControllerNavItem == "settings" && (
-            <div className="controller-settings">
-              <div className={styles.checkbox_container}>
-                <p>Show notes</p>
-                <input
-                  id="show_notes"
-                  type="checkbox"
-                  checked={showNotes}
-                  onChange={() => setShowNotes(!showNotes)}
+                </div>
+                <p>Highlighted scale</p>
+                <Select
+                  value={{ value: activeScale, label: activeScale }}
+                  onChange={(e: any, f) =>
+                    f.action == "select-option" &&
+                    e &&
+                    e.value &&
+                    setActiveScale(e.value)
+                  }
+                  formatGroupLabel={formatGroupLabel}
+                  options={defaultScalesOptions}
+                  styles={customSelectStyles}
                 />
               </div>
-              <div className={styles.checkbox_container}>
-                <p>Lefty (Coming Soon)</p>
-                <input
-                  id="show_notes"
-                  type="checkbox"
-                  checked={lefty}
-                  onChange={() => setLefty(!lefty)}
-                />
-              </div>
-            </div>
-          )}
+            )}
+          </div>
+        </div>
+        {error != "" && <p>{error}</p>}
+
+        <div ref={fretboardRef} className="display">
+          <Fretboard
+            showNotes={showNotes}
+            relativeSemitonePositionIndex={relativeSemitonePositionIndex}
+            mutedStrings={activePatternMutedStrings}
+            tuning={tuning}
+            initial_positions={positions}
+            moveable={activePatternMoveable}
+            highlightedScale={activeScale}
+            lefty={lefty}
+            overlaidPatterns={positionOverlays}
+            shiftOnMove={activePatternShiftOnMove}
+            onPositionAdd={onPositionAdd}
+            onPositionHighlight={onPositionHighlight}
+            onPositionDelete={onPositionDelete}
+          />
         </div>
       </div>
-      {error != "" && <p>{error}</p>}
 
-      <div ref={fretboardRef} className="display">
-        <Fretboard
-          showNotes={showNotes}
-          relativeSemitonePositionIndex={relativeSemitonePositionIndex}
-          mutedStrings={activePatternMutedStrings}
-          tuning={tuning}
-          initial_positions={positions}
-          moveable={activePatternMoveable}
-          lefty={lefty}
-          overlaidPatterns={positionOverlays}
-          shiftOnMove={activePatternShiftOnMove}
-          onPositionAdd={onPositionAdd}
-          onPositionHighlight={onPositionHighlight}
-          onPositionDelete={onPositionDelete}
-        />
-      </div>
+      <div
+        ref={fretboard2Ref}
+        style={{
+          height: "323px",
+        }}
+      ></div>
     </main>
   );
 }

@@ -105,3 +105,26 @@
   align-items: center;
   gap: 10px;
 }
+
+.lesson_patterns {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.lesson_pattern {
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 250px;
+}
+
+.lesson_pattern img {
+  width: 100%;
+  object-fit: cover;
+  max-height: 150px;
+  max-width: 150px;
+}
