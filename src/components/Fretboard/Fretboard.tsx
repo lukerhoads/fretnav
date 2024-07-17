@@ -15,7 +15,7 @@ import {
 } from "@/utils/note";
 import { DEFAULT_TUNING } from "@/constants/notes";
 import { DEFAULT_RESIZE_CONFIG, ResizeConfig } from "@/types/resize";
-import { DOT_INDEXES } from "@/constants/styles";
+import { DOT_POSITIONS } from "@/constants/styles";
 import { defaultScales } from "@/constants/scales";
 
 // TODO: shift to vertical after certain width achieved
@@ -49,6 +49,7 @@ type Props = {
   highlightedScale: string;
   mutedStrings?: number[];
   resizeToHighlight?: boolean;
+  activeScaleShowSemitones?: boolean;
   relativeSemitonePositionIndex: number | null;
   shiftOnMove?: boolean;
   onPositionAdd?: (idx: number, note: string) => void;
@@ -62,6 +63,7 @@ const Fretboard = ({
   initial_positions = [],
   moveable = false,
   lefty = false,
+  activeScaleShowSemitones = true,
   resizeToHighlight = false,
   highlightedScale = "",
   showNotes = false,
@@ -90,7 +92,7 @@ const Fretboard = ({
     DEFAULT_RESIZE_CONFIG,
   );
   const [stringGap, setStringGap] = useState(6);
-  const [fretGap, setFretGap] = useState(20);
+  const [fretGap, setFretGap] = useState(23);
   const [semitoneShift, setSemitoneShift] = useState(false);
 
   const handleRightClick = (e: any, idx: number) => {
@@ -134,25 +136,6 @@ const Fretboard = ({
     }
   };
 
-  // useEffect(() => {
-  // let semitoneOffset =
-  //   relativeSemitonePositionIndex != null && (draggingPositions.length > relativeSemitonePositionIndex || initial_positions.length > relativeSemitonePositionIndex) &&
-  //   getSemitoneOffset(
-  //     controllerFret,
-  //     controllerString,
-  //     dragging && draggingPositions.length > 0
-  //       ? draggingPositions[relativeSemitonePositionIndex].fret
-  //       : positions[relativeSemitonePositionIndex].fret,
-  //     dragging && draggingPositions.length > 0
-  //       ? draggingPositions[relativeSemitonePositionIndex].guitar_string
-  //       : positions[relativeSemitonePositionIndex].guitar_string,
-  //     tuning,
-  //   );
-
-  //   // something buggy here
-  // setSemitoneShift(semitoneOffset != null && semitoneOffset != 0);
-  // }, [controllerFret, controllerString]);
-
   useEffect(() => {
     setPositions([...initial_positions]);
     if (initialPositions.length == 0) {
@@ -178,7 +161,7 @@ const Fretboard = ({
       if (bc.current && positions.length > 0) {
         let config: ResizeConfig = {
           starting_fret: 0,
-          ending_fret: 20,
+          ending_fret: 23,
           starting_string: 0,
           ending_string: 6,
         };
@@ -202,7 +185,7 @@ const Fretboard = ({
           // min fret - 1 + idealFrets ending
         }
 
-        if (config.ending_fret > 20) config.ending_fret = 20;
+        if (config.ending_fret > 23) config.ending_fret = 23;
         config.starting_string = minString == 0 ? 0 : minString - 1;
         if (idealStrings < maxString - minString + 2) {
           // min fret - 1 starting
@@ -222,6 +205,8 @@ const Fretboard = ({
           config.ending_string > config.starting_string
         )
           setResizeConfig(config);
+
+        console.log(config);
       }
     } else {
       setResizeConfig(DEFAULT_RESIZE_CONFIG);
@@ -238,8 +223,8 @@ const Fretboard = ({
       bc.current
     ) {
       const rect = bc.current.getBoundingClientRect();
-      const fret_width = rect.width / 20;
-      const string_height = rect.height / 7;
+      const fret_width = rect.width / fretGap;
+      const string_height = rect.height / stringGap;
       const x = mousePosition.x - rect.x;
       const y = mousePosition.y - rect.y;
       let closest_fret = Math.floor(x / fret_width) + 1;
@@ -289,12 +274,12 @@ const Fretboard = ({
         }}
       >
         {arrayRange(
-          resizeConfig.starting_fret,
-          resizeConfig.ending_fret - 1,
+          resizeConfig.starting_fret + 1,
+          resizeConfig.ending_fret,
           1,
         ).map((i) => (
           <div key={i}>
-            <p>{i + 1}</p>
+            <p>{i}</p>
           </div>
         ))}
       </div>
@@ -344,14 +329,14 @@ const Fretboard = ({
                 resizeConfig.ending_string,
                 1,
               )
-                .map((i) => arrayRange(i * 20, i * 20 + fretGap - 1, 1))
+                .map((i) => arrayRange(i * 23, i * 23 + fretGap - 1, 1))
                 .flat()
-                .filter((i) => i < 140)
+                .filter((i) => i < 161)
                 .filter((i) => i >= 0),
             ),
           ].map((i) => {
-            let fret = (i % 20) + 1; // resizeConfig.starting_fret + ((i % fretGap) + 1)
-            let gt_string = Math.floor(i / 20); // resizeConfig.starting_string + Math.floor(i / fretGap)
+            let fret = (i % 23) + 1; // resizeConfig.starting_fret + ((i % fretGap) + 1)
+            let gt_string = Math.floor(i / 23); // resizeConfig.starting_string + Math.floor(i / fretGap)
             let config = (dragging ? draggingPositions : positions).find(
               (p) =>
                 p.guitar_string == gt_string &&
@@ -408,7 +393,9 @@ const Fretboard = ({
                 let offset = scale.notes.indexOf(note);
                 let real_offset = getNoteSemitoneOffset(scale.notes[0], note);
                 if (offset != -1) {
-                  semitoneScaleOffset = real_offset;
+                  semitoneScaleOffset = activeScaleShowSemitones
+                    ? real_offset
+                    : offset;
                 }
               }
             }
@@ -495,8 +482,9 @@ const Fretboard = ({
                       style={{
                         backgroundColor:
                           semitoneScaleOffset != null
-                            ? `rgba(255, 165, 0, ${1 - semitoneScaleOffset / 12})`
+                            ? `rgba(255, 165, 0, ${1 - semitoneScaleOffset / (activeScaleShowSemitones ? 12 : 7)})`
                             : undefined,
+                        border: "1px solid rgba(255, 165, 0, 1)",
                       }}
                       disabled={true}
                     >
@@ -525,7 +513,11 @@ const Fretboard = ({
                       <p>{c.label}</p>
                     </button>
                   ))}
-                {DOT_INDEXES.includes(i /*gt_string * 20 + fret - 1*/) && (
+                {DOT_POSITIONS.find(
+                  (p) =>
+                    p.fret == fret &&
+                    p.string == gt_string /*gt_string * 20 + fret - 1*/,
+                ) != undefined && (
                   <div
                     className={styles.dot}
                     style={{

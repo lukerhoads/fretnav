@@ -9,10 +9,397 @@ export const pattern_categories = [
   "Triads",
   "Harmonization",
   "Moveable",
+  "Arpeggio",
   "Test",
 ];
 
 export const patterns: Pattern[] = [
+  {
+    name: "Major 7",
+    positions: [
+      {
+        guitar_string: 4,
+        fret: 3,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 2,
+        fret: 4,
+        label: "7",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 1,
+        fret: 5,
+        label: "3",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 3,
+        fret: 5,
+        label: "5",
+        color: "#FA1A0D",
+      },
+      {
+        guitar_string: 0,
+        fret: 3,
+        label: "5",
+        color: "#FA1A0D",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Minor 7",
+    positions: [
+      {
+        guitar_string: 4,
+        fret: 3,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 2,
+        fret: 3,
+        label: "b7",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 1,
+        fret: 4,
+        label: "b3",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 3,
+        fret: 5,
+        label: "5",
+        color: "#FA1A0D",
+      },
+      {
+        guitar_string: 0,
+        fret: 3,
+        label: "5",
+        color: "#FA1A0D",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "G minor",
+    positions: [
+      {
+        guitar_string: 4,
+        fret: 1,
+        label: "A#",
+        color: "black",
+      },
+      {
+        guitar_string: 5,
+        fret: 3,
+        label: "G",
+        color: "black",
+      },
+      {
+        guitar_string: 0,
+        fret: 3,
+        label: "G",
+        color: "black",
+      },
+      {
+        guitar_string: 1,
+        fret: 3,
+        label: "D",
+        color: "black",
+      },
+    ],
+    category: "Open Chords",
+  },
+  {
+    name: "Minor Arpeggio (1-2nps form 1)",
+    positions: [
+      {
+        guitar_string: 5,
+        fret: 8,
+        label: "C",
+        color: "black",
+      },
+      {
+        guitar_string: 4,
+        fret: 10,
+        label: "G",
+        color: "black",
+      },
+      {
+        guitar_string: 3,
+        fret: 10,
+        label: "C",
+        color: "black",
+      },
+      {
+        guitar_string: 2,
+        fret: 12,
+        label: "G",
+        color: "black",
+      },
+      {
+        guitar_string: 1,
+        fret: 13,
+        label: "C",
+        color: "black",
+      },
+      {
+        guitar_string: 0,
+        fret: 15,
+        label: "G",
+        color: "black",
+      },
+      {
+        guitar_string: 5,
+        fret: 11,
+        label: "D#",
+        color: "black",
+      },
+      {
+        guitar_string: 3,
+        fret: 13,
+        label: "D#",
+        color: "black",
+      },
+      {
+        guitar_string: 1,
+        fret: 16,
+        label: "D#",
+        color: "black",
+      },
+    ],
+    category: "Arpeggio",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Minor Arpeggio (1-2nps form 2)",
+    positions: [
+      {
+        guitar_string: 5,
+        fret: 8,
+        label: "C",
+        color: "black",
+      },
+      {
+        guitar_string: 4,
+        fret: 6,
+        label: "D#",
+        color: "black",
+      },
+      {
+        guitar_string: 4,
+        fret: 10,
+        label: "G",
+        color: "black",
+      },
+      {
+        guitar_string: 3,
+        fret: 10,
+        label: "C",
+        color: "black",
+      },
+      {
+        guitar_string: 2,
+        fret: 8,
+        label: "D#",
+        color: "black",
+      },
+      {
+        guitar_string: 2,
+        fret: 12,
+        label: "G",
+        color: "black",
+      },
+      {
+        guitar_string: 1,
+        fret: 13,
+        label: "C",
+        color: "black",
+      },
+      {
+        guitar_string: 0,
+        fret: 11,
+        label: "D#",
+        color: "black",
+      },
+      {
+        guitar_string: 0,
+        fret: 15,
+        label: "G",
+        color: "black",
+      },
+    ],
+    category: "Arpeggio",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Minor",
+    positions: [
+      {
+        guitar_string: 2,
+        fret: 8,
+        label: "5",
+        color: "#FA1A0D",
+      },
+      {
+        guitar_string: 1,
+        fret: 9,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 3,
+        fret: 9,
+        label: "b3",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 4,
+        fret: 11,
+        label: "1",
+        color: "#58B4EE",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Major Arpeggio (1-2nps form 1)",
+    positions: [
+      {
+        guitar_string: 5,
+        fret: 8,
+        label: "C",
+        color: "black",
+      },
+      {
+        guitar_string: 5,
+        fret: 12,
+        label: "E",
+        color: "black",
+      },
+      {
+        guitar_string: 4,
+        fret: 10,
+        label: "G",
+        color: "black",
+      },
+      {
+        guitar_string: 3,
+        fret: 10,
+        label: "C",
+        color: "black",
+      },
+      {
+        guitar_string: 3,
+        fret: 14,
+        label: "E",
+        color: "black",
+      },
+      {
+        guitar_string: 2,
+        fret: 12,
+        label: "G",
+        color: "black",
+      },
+      {
+        guitar_string: 1,
+        fret: 13,
+        label: "C",
+        color: "black",
+      },
+      {
+        guitar_string: 1,
+        fret: 17,
+        label: "E",
+        color: "black",
+      },
+      {
+        guitar_string: 0,
+        fret: 15,
+        label: "G",
+        color: "black",
+      },
+    ],
+    category: "Arpeggio",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Major Arpeggio (1-2nps form 2)",
+    positions: [
+      {
+        guitar_string: 5,
+        fret: 7,
+        label: "B",
+        color: "black",
+      },
+      {
+        guitar_string: 4,
+        fret: 6,
+        label: "D#",
+        color: "black",
+      },
+      {
+        guitar_string: 4,
+        fret: 9,
+        label: "F#",
+        color: "black",
+      },
+      {
+        guitar_string: 3,
+        fret: 9,
+        label: "B",
+        color: "black",
+      },
+      {
+        guitar_string: 2,
+        fret: 8,
+        label: "D#",
+        color: "black",
+      },
+      {
+        guitar_string: 2,
+        fret: 11,
+        label: "F#",
+        color: "black",
+      },
+      {
+        guitar_string: 1,
+        fret: 12,
+        label: "B",
+        color: "black",
+      },
+      {
+        guitar_string: 0,
+        fret: 11,
+        label: "D#",
+        color: "black",
+      },
+      {
+        guitar_string: 0,
+        fret: 14,
+        label: "F#",
+        color: "black",
+      },
+    ],
+    category: "Arpeggio",
+    moveable: true,
+    shiftOnMove: true,
+  },
   {
     name: "Major 7 / 7",
     positions: [
@@ -303,7 +690,7 @@ export const patterns: Pattern[] = [
     moveable: true,
   },
   {
-    name: "Open E",
+    name: "E",
     category: "Open Chords",
     positions: [
       {
@@ -327,7 +714,7 @@ export const patterns: Pattern[] = [
     ],
   },
   {
-    name: "Open A",
+    name: "A",
     category: "Open Chords",
     positions: [
       {
@@ -351,7 +738,7 @@ export const patterns: Pattern[] = [
     ],
   },
   {
-    name: "Open C",
+    name: "C",
     category: "Open Chords",
     positions: [
       {
@@ -375,7 +762,135 @@ export const patterns: Pattern[] = [
     ],
   },
   {
-    name: "Open G",
+    name: "Major 6",
+    positions: [
+      {
+        guitar_string: 1,
+        fret: 6,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 3,
+        fret: 7,
+        label: "3",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 2,
+        fret: 5,
+        label: "5",
+        color: "#FA1A0D",
+      },
+      {
+        guitar_string: 4,
+        fret: 5,
+        label: "6",
+        color: "#ABCE30",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Major 6 Drop 5",
+    positions: [
+      {
+        guitar_string: 1,
+        fret: 6,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 3,
+        fret: 7,
+        label: "3",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 2,
+        fret: 7,
+        label: "6",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 4,
+        fret: 8,
+        label: "1",
+        color: "#58B4EE",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Minor 6 Drop 5",
+    positions: [
+      {
+        guitar_string: 1,
+        fret: 6,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 2,
+        fret: 7,
+        label: "6",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 4,
+        fret: 8,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 3,
+        fret: 6,
+        label: "b3",
+        color: "#FD8D04",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Minor 6",
+    positions: [
+      {
+        guitar_string: 1,
+        fret: 6,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 2,
+        fret: 5,
+        label: "5",
+        color: "#FA1A0D",
+      },
+      {
+        guitar_string: 4,
+        fret: 5,
+        label: "6",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 3,
+        fret: 6,
+        label: "b3",
+        color: "#FD8D04",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "G",
     category: "Open Chords",
     positions: [
       {
@@ -399,7 +914,7 @@ export const patterns: Pattern[] = [
     ],
   },
   {
-    name: "Open D",
+    name: "D",
     category: "Open Chords",
     positions: [
       {
@@ -423,7 +938,7 @@ export const patterns: Pattern[] = [
     ],
   },
   {
-    name: "Open E minor",
+    name: "E minor",
     category: "Open Chords",
     positions: [
       {
@@ -441,7 +956,7 @@ export const patterns: Pattern[] = [
     ],
   },
   {
-    name: "Open A minor",
+    name: "A minor",
     category: "Open Chords",
     positions: [
       {
@@ -465,7 +980,7 @@ export const patterns: Pattern[] = [
     ],
   },
   {
-    name: "Open D minor",
+    name: "D minor",
     category: "Open Chords",
     positions: [
       {
@@ -487,6 +1002,31 @@ export const patterns: Pattern[] = [
         color: "black",
       },
     ],
+  },
+  {
+    name: "C minor",
+    positions: [
+      {
+        guitar_string: 1,
+        fret: 1,
+        label: "C",
+        color: "black",
+      },
+      {
+        guitar_string: 3,
+        fret: 1,
+        label: "D#",
+        color: "black",
+      },
+      {
+        guitar_string: 4,
+        fret: 3,
+        label: "C",
+        color: "black",
+      },
+    ],
+    category: "Open Chords",
+    mutedStrings: [1, 6],
   },
   {
     name: "Major (E Form)",
@@ -2503,7 +3043,7 @@ export const patterns: Pattern[] = [
 export const defaultGroupedOptions = pattern_categories.map((c) => ({
   label: c,
   options: patterns
-    .filter((p) => p.category == c)
+    .filter((p) => p.category === c)
     .map((p) => ({ value: p.name, label: p.name }))
     .sort((a, b) => {
       if (a.label < b.label) {

@@ -8,6 +8,6 @@ export type ResizeConfig = {
 export const DEFAULT_RESIZE_CONFIG = {
   starting_fret: 0,
   starting_string: 0,
-  ending_fret: 20,
+  ending_fret: 23,
   ending_string: 6,
 };

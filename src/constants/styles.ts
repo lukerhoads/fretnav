@@ -1,9 +1,48 @@
 import { StylesConfig } from "react-select";
 import chroma from "chroma-js";
 
-export const DOT_INDEXES = [63, 65, 67, 69, 75, 77, 79, 52, 92].map(
-  (i) => i - 1,
-);
+export const DOT_POSITIONS = [
+  {
+    fret: 3,
+    string: 3,
+  },
+  {
+    fret: 5,
+    string: 3,
+  },
+  {
+    fret: 7,
+    string: 3,
+  },
+  {
+    fret: 9,
+    string: 3,
+  },
+  {
+    fret: 12,
+    string: 2,
+  },
+  {
+    fret: 12,
+    string: 4,
+  },
+  {
+    fret: 15,
+    string: 3,
+  },
+  {
+    fret: 17,
+    string: 3,
+  },
+  {
+    fret: 19,
+    string: 3,
+  },
+  {
+    fret: 21,
+    string: 3,
+  },
+];
 
 export const customSelectStyles: StylesConfig = {
   control: (provided) => ({

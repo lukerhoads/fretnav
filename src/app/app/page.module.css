@@ -111,15 +111,13 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: flex-start;
+  gap: 10px;
 }
 
 .lesson_pattern {
   border: 1px solid black;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   width: 250px;
+  padding: 10px;
 }
 
 .lesson_pattern img {

@@ -9,11 +9,7 @@ import Position from "@/components/Position/Position";
 import { Pattern, PositionConfig } from "@/types/pattern";
 import Fretboard from "@/components/Fretboard/Fretboard";
 import html2canvas from "html2canvas";
-import {
-  defaultGroupedOptions,
-  pattern_categories,
-  patterns,
-} from "@/constants/patterns";
+import { defaultGroupedOptions, patterns } from "@/constants/patterns";
 import { useSearchParams } from "next/navigation";
 import Select from "react-select";
 import { customSelectStyles } from "@/constants/styles";
@@ -25,7 +21,7 @@ import Card from "@/components/Card/Card";
 import Timeline from "@/components/Timeline/Timeline";
 import usePitch from "@/utils/usePitch";
 import { createRoot } from "react-dom/client";
-import { defaultScalesOptions, userDefinedScales } from "@/constants/scales";
+import { defaultScales, defaultScalesOptions } from "@/constants/scales";
 
 const groupStyles = {
   display: "flex",
@@ -111,6 +107,8 @@ export default function Page() {
   const pitchInfo = usePitch();
 
   const [activeScale, setActiveScale] = useState("");
+  const [activeScaleShowSemitones, setActiveScaleShowSemitones] =
+    useState(true);
 
   const onPositionHighlight = (idx: number, fret: number, string: number) => {
     let idx_active = positions.findIndex(
@@ -123,8 +121,8 @@ export default function Page() {
   };
 
   const onPositionAdd = (idx: number, note: string) => {
-    let fret = (idx % 20) + 1;
-    let string = Math.floor(idx / 20);
+    let fret = (idx % 23) + 1;
+    let string = Math.floor(idx / 23);
     setPositions([
       ...positions,
       {
@@ -138,48 +136,70 @@ export default function Page() {
 
   const onPositionDelete = (idx: number) => {
     // console.log("Deleting ", idx)
-    let fret = (idx % 20) + 1;
-    let string = Math.floor(idx / 20);
+    let fret = (idx % 23) + 1;
+    let string = Math.floor(idx / 23);
     setPositions(
       positions.filter((p) => p.guitar_string != string || p.fret != fret),
     );
   };
 
-  const getFretboardImageURL = async () => {
+  const cropCanvas = (
+    sourceCanvas: HTMLCanvasElement,
+    left: number,
+    top: number,
+    width: number,
+    height: number,
+  ) => {
+    let destCanvas = document.createElement("canvas");
+    destCanvas.width = width;
+    destCanvas.height = height;
+    if (destCanvas != null) {
+      destCanvas.getContext("2d").drawImage(
+        sourceCanvas,
+        left,
+        top,
+        width,
+        height, // source rect with content to crop
+        0,
+        0,
+        width,
+        height,
+      ); // newCanvas, same size as source rect
+    }
+    return destCanvas;
+  };
+
+  const getFretboardImageURL = async (crop: boolean = false) => {
     let element = fretboardRef.current;
     if (element == null) return;
-    console.log("Element: ", element);
     const canvas = await html2canvas(element);
-    console.log("Canvas: ", canvas);
-    const data = canvas.toDataURL("image/jpg");
-    console.log("Data: ", data);
+    if (crop) {
+      let baseX = canvas.width * 0.0434783;
+      let baseY = canvas.height * 0.1428571;
+      let fretWidth = canvas.width / 24;
+      let minFret = Math.min(...positions.map((p) => p.fret)) - 1;
+      if (minFret < 0) minFret = 0;
+      console.log(minFret, fretWidth);
+      let croppedCanvas = cropCanvas(
+        canvas,
+        baseX + minFret * fretWidth + canvas.height * (11 / 7) > canvas.width
+          ? canvas.width - canvas.height * (11 / 7)
+          : minFret * fretWidth,
+        baseY,
+        canvas.height * (11 / 7),
+        canvas.height,
+      );
+      const data = croppedCanvas.toDataURL("image/jpg");
+      return data;
+    }
+    let data = canvas.toDataURL("image/jpg");
     return data;
   };
 
   const updateFretboardImageCanvas = async () => {
-    // let element = fretboardRef.current
-    // if (fretboard2Ref && fretboard2Ref.current) {
-    //   fretboard2Ref.current.innerHTML = "";
-    //   let fretboardContainer = document.createElement("div")
-    //   fretboard2Ref.current.appendChild(fretboardContainer)
-    //   let root = createRoot(fretboardContainer!);
-    //   root.render(
-    //     <Fretboard
-    //       relativeSemitonePositionIndex={null}
-    //       mutedStrings={activePatternMutedStrings}
-    //       tuning={["E", "A", "D", "G", "B", "E"]}
-    //       initial_positions={positions}
-    //       moveable={false}
-    //       lefty={false}
-    //     />,
-    //   );
-    // }
-    // if (element == null) return;
-    // console.log("Element: ", element)
-    // const canvas = await html2canvas(element);
-    // const data = canvas.toDataURL("image/jpg");
-    let url = await getFretboardImageURL();
+    let url = await getFretboardImageURL(true);
     let img = document.createElement("img");
+    console.log(url);
     if (url) img.src = url;
     let elem = document.getElementById(
       `lesson-pattern-${activeLessonPatternIndex}`,
@@ -292,11 +312,19 @@ export default function Page() {
   };
 
   useEffect(() => {
+    console.log("Changed", activeLessonPatternIndex);
     if (activeLessonPatternIndex != null) {
       setActivePattern(lessonPatterns[activeLessonPatternIndex].name);
       setPositions(lessonPatterns[activeLessonPatternIndex].positions);
     }
-  }, [activeLessonPatternIndex]);
+  }, [lessonPatterns, activeLessonPatternIndex]);
+
+  useEffect(() => {
+    if (!lessonCreatorActive) {
+      setActivePattern("");
+      setPositions([]);
+    }
+  }, [lessonCreatorActive]);
 
   useEffect(() => {
     let newPatternOverlays: Pattern[] = [];
@@ -356,12 +384,11 @@ export default function Page() {
       setRelativeSemitonePositionIndex(null);
     }
 
-    console.log("Active lesson pattern: ", activeLessonPatternIndex);
     if (activeLessonPatternIndex != null) {
       let newLessonPatterns = [...lessonPatterns];
       newLessonPatterns[activeLessonPatternIndex].positions = positions;
       setLessonPatterns(newLessonPatterns);
-      updateFretboardImageCanvas();
+      // updateFretboardImageCanvas();
     }
   }, [positions]);
 
@@ -420,7 +447,7 @@ export default function Page() {
             >
               <p>Navigator</p>
             </div>
-            <div
+            {/* <div
               className={
                 styles.controller_nav_item +
                 (activeControllerNavItem == "songs"
@@ -430,7 +457,7 @@ export default function Page() {
               onClick={() => setActiveControllerNavItem("songs")}
             >
               <p>Songs</p>
-            </div>
+            </div> */}
             <div
               className={
                 styles.controller_nav_item +
@@ -710,7 +737,7 @@ export default function Page() {
               </>
             )}
 
-            {activeControllerNavItem == "songs" && (
+            {/* {activeControllerNavItem == "songs" && (
               <div className="controller-songs">
                 {songs.length > 0 ? (
                   songs.map((song, i) => (
@@ -761,33 +788,40 @@ export default function Page() {
                   Create New Song
                 </button>
               </div>
-            )}
+            )} */}
             {activeControllerNavItem == "lessons" && (
               <div className="controller-lessons">
                 {lessons.length > 0 ? (
                   lessons.map((lesson, i) => (
-                    <Card
-                      key={i}
-                      img={undefined}
-                      title={lesson.name}
-                      subtitle={""}
-                    />
+                    <div className={styles.card}>
+                      <div className={styles.card_img}>
+                        <img src={undefined} alt={lesson.name} />
+                      </div>
+                      <div className={styles.card_text}>
+                        <h3>{lesson.name}</h3>
+                        <p>{lesson.description.substring(0, 20)}...</p>
+                        <button onClick={() => {}}>Start</button>
+                      </div>
+                    </div>
                   ))
                 ) : (
                   <p>No lessons</p>
                 )}
                 {lessonCreatorActive && (
                   <>
-                    <input
-                      type="text"
-                      placeholder="Lesson name"
-                      onChange={(e) => setLessonName(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Lesson description"
-                      onChange={(e) => setLessonDescription(e.target.value)}
-                    />
+                    <h3>Lesson Creator</h3>
+                    <div className={styles.controller_selectors}>
+                      <input
+                        type="text"
+                        placeholder="Lesson name"
+                        onChange={(e) => setLessonName(e.target.value)}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Lesson description"
+                        onChange={(e) => setLessonDescription(e.target.value)}
+                      />
+                    </div>
                     <div className={styles.lesson_patterns}>
                       {lessonPatterns.map((p, i) => (
                         <div
@@ -795,14 +829,41 @@ export default function Page() {
                           className={styles.lesson_pattern}
                           onClick={() => setActiveLessonPatternIndex(i)}
                         >
-                          {p.positions.length > 0 ? (
-                            <div id={`lesson-pattern-${i}`}></div>
-                          ) : (
-                            <img src={"blank-fretboard.jpg"} alt={p.name} />
-                          )}
+                          {/* <div id={`lesson-pattern-${i}`}></div> */}
+                          <Select
+                            value={{
+                              value: lessonPatterns[i].name,
+                              label: lessonPatterns[i].name,
+                            }}
+                            onChange={(e: any, f) => {
+                              if (f.action == "select-option" && e && e.value) {
+                                let newPatterns = [...lessonPatterns];
+                                let subPattern = patterns.find(
+                                  (p) => p.name == e.value,
+                                );
+                                if (subPattern != undefined)
+                                  newPatterns[i] = subPattern;
+                                setLessonPatterns(newPatterns);
+                              }
+                            }}
+                            formatGroupLabel={formatGroupLabel}
+                            options={defaultGroupedOptions.concat({
+                              label: "User Defined",
+                              options: userDefinedPatterns.map((p) => ({
+                                value: p.name,
+                                label: p.name,
+                              })),
+                            })}
+                            styles={customSelectStyles}
+                          />
                           <input
                             type="text"
                             value={p.name}
+                            style={{
+                              marginTop: "5px",
+                              marginBottom: "5px",
+                            }}
+                            placeholder="Pattern name"
                             onChange={(e) => {
                               let newPatterns = [...lessonPatterns];
                               newPatterns[i].name = e.target.value;
@@ -825,6 +886,13 @@ export default function Page() {
                       ))}
                       <div
                         className={styles.lesson_pattern}
+                        style={{
+                          cursor: "pointer",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
                         onClick={() => {
                           setLessonPatterns([
                             ...lessonPatterns,
@@ -833,26 +901,35 @@ export default function Page() {
                           setActiveLessonPatternIndex(lessonPatterns.length);
                         }}
                       >
-                        <p>+</p>
+                        <p>New Pattern</p>
+                        <h1>+</h1>
                       </div>
                     </div>
-                    <button onClick={() => setLessonCreatorActive(false)}>
-                      Close
-                    </button>
                   </>
                 )}
-                <button
-                  className={styles.controller_button}
-                  onClick={() => setLessonCreatorActive(true)}
-                >
-                  Create New Lesson
-                </button>
-                <button
-                  className={styles.controller_button}
-                  onClick={() => pitchInfo.setup()}
-                >
-                  Listen for pitch
-                </button>
+                <div className={styles.controller_selectors}>
+                  {lessonCreatorActive ? (
+                    <button
+                      className={styles.controller_button}
+                      onClick={() => setLessonCreatorActive(false)}
+                    >
+                      Close
+                    </button>
+                  ) : (
+                    <button
+                      className={styles.controller_button}
+                      onClick={() => setLessonCreatorActive(true)}
+                    >
+                      Create New Lesson
+                    </button>
+                  )}
+                  <button
+                    className={styles.controller_button}
+                    onClick={() => pitchInfo.setup()}
+                  >
+                    Listen for pitch
+                  </button>
+                </div>
                 {pitchInfo.pitch}
               </div>
             )}
@@ -889,6 +966,18 @@ export default function Page() {
                   options={defaultScalesOptions}
                   styles={customSelectStyles}
                 />
+                <button onClick={() => setActiveScale("")}>Clear</button>
+                <div className={styles.checkbox_container}>
+                  <p>Show semitones</p>
+                  <input
+                    id="show_notes"
+                    type="checkbox"
+                    checked={activeScaleShowSemitones}
+                    onChange={() =>
+                      setActiveScaleShowSemitones(!activeScaleShowSemitones)
+                    }
+                  />
+                </div>
               </div>
             )}
           </div>
@@ -906,6 +995,7 @@ export default function Page() {
             highlightedScale={activeScale}
             lefty={lefty}
             overlaidPatterns={positionOverlays}
+            activeScaleShowSemitones={activeScaleShowSemitones}
             shiftOnMove={activePatternShiftOnMove}
             onPositionAdd={onPositionAdd}
             onPositionHighlight={onPositionHighlight}
