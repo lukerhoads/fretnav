@@ -52,9 +52,11 @@ type Props = {
   activeScaleShowSemitones?: boolean;
   relativeSemitonePositionIndex: number | null;
   shiftOnMove?: boolean;
+  lessonPlayerActive?: boolean;
   onPositionAdd?: (idx: number, note: string) => void;
   onPositionHighlight?: (idx: number, fret: number, string: number) => void;
   onPositionDelete?: (idx: number) => void;
+  onPositionChange?: (newPositions: PositionConfig[]) => void;
 };
 
 const Fretboard = ({
@@ -70,9 +72,11 @@ const Fretboard = ({
   overlaidPatterns = [],
   relativeSemitonePositionIndex,
   shiftOnMove = false,
+  lessonPlayerActive = false,
   onPositionAdd = () => {},
   onPositionHighlight = () => {},
   onPositionDelete = () => {},
+  onPositionChange = () => {},
 }: Props) => {
   const [width, height] = useWindowSize();
   const mousePosition = useMousePosition();
@@ -94,6 +98,7 @@ const Fretboard = ({
   const [stringGap, setStringGap] = useState(6);
   const [fretGap, setFretGap] = useState(23);
   const [semitoneShift, setSemitoneShift] = useState(false);
+  const [vertical, setVertical] = useState(false);
 
   const handleRightClick = (e: any, idx: number) => {
     e.preventDefault();
@@ -132,6 +137,7 @@ const Fretboard = ({
           positions[relativeSemitonePositionIndex],
         );
       setPositions(e.key == "Escape" ? initialPositions : draggingPositions);
+      if (e.key == "Enter") onPositionChange(draggingPositions);
       cleanUp();
     }
   };
@@ -214,6 +220,10 @@ const Fretboard = ({
   }, [resizeToHighlight, bc, positions, width]);
 
   useEffect(() => {
+    setVertical(width < 1000);
+  }, [width]);
+
+  useEffect(() => {
     if (
       dragging &&
       draggingPositions.length > 0 &&
@@ -224,7 +234,7 @@ const Fretboard = ({
     ) {
       const rect = bc.current.getBoundingClientRect();
       const fret_width = rect.width / fretGap;
-      const string_height = rect.height / stringGap;
+      const string_height = rect.height / (vertical ? fretGap : stringGap);
       const x = mousePosition.x - rect.x;
       const y = mousePosition.y - rect.y;
       let closest_fret = Math.floor(x / fret_width) + 1;
@@ -262,43 +272,67 @@ const Fretboard = ({
     <div
       className={styles.fretboard}
       style={{
-        gridTemplateRows: `repeat(${stringGap + 1}, auto)`,
-        gridTemplateColumns: `repeat(${fretGap + 1}, auto)`,
+        gridTemplateRows: `repeat(${(vertical ? fretGap : stringGap) + 1}, auto)`,
+        gridTemplateColumns: `repeat(${(vertical ? stringGap : fretGap) + 1}, auto)`,
       }}
     >
       <div
         className={styles.fret_labels}
         style={{
-          gridTemplateColumns: `repeat(${fretGap}, ${(100 / fretGap).toFixed(5)}%)`,
-          gridColumn: `2 / span ${fretGap}`,
+          gridTemplateColumns: `repeat(${vertical ? stringGap : fretGap}, ${(100 / (vertical ? stringGap : fretGap)).toFixed(5)}%)`,
+          gridColumn: `2 / span ${vertical ? stringGap : fretGap}`,
         }}
       >
-        {arrayRange(
-          resizeConfig.starting_fret + 1,
-          resizeConfig.ending_fret,
-          1,
+        {(vertical
+          ? arrayRange(
+              resizeConfig.starting_string,
+              resizeConfig.ending_string - 1,
+              1,
+            )
+          : arrayRange(
+              resizeConfig.starting_fret + 1,
+              resizeConfig.ending_fret,
+              1,
+            )
         ).map((i) => (
           <div key={i}>
-            <p>{i}</p>
+            {vertical ? (
+              <p className={mutedStrings.includes(i + 1) ? styles.muted : ""}>
+                {tuning[i]}
+              </p>
+            ) : (
+              <p>{i}</p>
+            )}
           </div>
         ))}
       </div>
       <div
         className={styles.string_labels}
         style={{
-          gridTemplateRows: `repeat(${stringGap + 1}, ${(100 / (stringGap + 1)).toFixed(5)}%)`,
-          gridRow: `2 / span ${stringGap}`,
+          gridTemplateRows: `repeat(${(vertical ? fretGap : stringGap) + 1}, ${(100 / ((vertical ? fretGap : stringGap) + 1)).toFixed(5)}%)`,
+          gridRow: `2 / span ${vertical ? fretGap : stringGap}`,
         }}
       >
-        {arrayRange(
-          resizeConfig.starting_string,
-          resizeConfig.ending_string - 1,
-          1,
+        {(!vertical
+          ? arrayRange(
+              resizeConfig.starting_string,
+              resizeConfig.ending_string - 1,
+              1,
+            )
+          : arrayRange(
+              resizeConfig.starting_fret + 1,
+              resizeConfig.ending_fret,
+              1,
+            )
         ).map((i) => (
           <div key={i}>
-            <p className={mutedStrings.includes(i + 1) ? styles.muted : ""}>
-              {tuning[5 - i]}
-            </p>
+            {vertical ? (
+              <p>{i}</p>
+            ) : (
+              <p className={mutedStrings.includes(i + 1) ? styles.muted : ""}>
+                {tuning[5 - i]}
+              </p>
+            )}
           </div>
         ))}
       </div>
@@ -306,8 +340,8 @@ const Fretboard = ({
         className={styles.board_container}
         ref={bc}
         style={{
-          gridRow: `2 / span ${stringGap}`,
-          gridColumn: `2 / span ${fretGap}`,
+          gridRow: `2 / span ${vertical ? fretGap : stringGap}`,
+          gridColumn: `2 / span ${vertical ? stringGap : fretGap}`,
         }}
       >
         <img
@@ -318,8 +352,8 @@ const Fretboard = ({
         <div
           className={styles.board}
           style={{
-            gridTemplateRows: `repeat(${stringGap}, auto)`,
-            gridTemplateColumns: `repeat(${fretGap}, auto)`,
+            gridTemplateRows: `repeat(${vertical ? fretGap : stringGap}, auto)`,
+            gridTemplateColumns: `repeat(${vertical ? stringGap : fretGap}, auto)`,
           }}
         >
           {[
@@ -329,7 +363,13 @@ const Fretboard = ({
                 resizeConfig.ending_string,
                 1,
               )
-                .map((i) => arrayRange(i * 23, i * 23 + fretGap - 1, 1))
+                .map((i) =>
+                  arrayRange(
+                    i * 23,
+                    i * 23 + (vertical ? stringGap : fretGap) - 1,
+                    1,
+                  ),
+                )
                 .flat()
                 .filter((i) => i < 161)
                 .filter((i) => i >= 0),
@@ -444,7 +484,11 @@ const Fretboard = ({
                   (config != undefined ? (
                     <button
                       disabled={dragging}
-                      onMouseDown={() => moveable && start(fret, gt_string)}
+                      onMouseDown={() =>
+                        moveable &&
+                        !lessonPlayerActive &&
+                        start(fret, gt_string)
+                      }
                       onContextMenu={(e) => handleRightClick(e, i)}
                       className={styles.fret_position}
                       style={{
@@ -522,10 +566,14 @@ const Fretboard = ({
                     className={styles.dot}
                     style={{
                       width: bc.current
-                        ? bc.current.getBoundingClientRect().width / fretGap / 3
+                        ? bc.current.getBoundingClientRect().width /
+                          (vertical ? stringGap : fretGap) /
+                          3
                         : "20px",
                       height: bc.current
-                        ? bc.current.getBoundingClientRect().width / fretGap / 3
+                        ? bc.current.getBoundingClientRect().width /
+                          (vertical ? stringGap : fretGap) /
+                          3
                         : "20px",
                       backgroundColor:
                         relativeSemitonePositionIndex != null

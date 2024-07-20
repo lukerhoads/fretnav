@@ -13,9 +13,9 @@ export default function Page({ params }: { params: { id: string } }) {
           <h2>{post.title}</h2>
           <p>{post.date}</p>
         </div>
-
-        <FretboardPane tuning={DEFAULT_TUNING} patternName={post.pattern} />
-
+        {post.pattern && (
+          <FretboardPane tuning={DEFAULT_TUNING} patternName={post.pattern} />
+        )}
         <Markdown className={styles.content}>{post.content}</Markdown>
       </div>
     );

@@ -19,9 +19,10 @@ import { Song } from "@/types/song";
 import { Lesson } from "@/types/lesson";
 import Card from "@/components/Card/Card";
 import Timeline from "@/components/Timeline/Timeline";
-import usePitch from "@/utils/usePitch";
+import usePitch from "@/app/hooks/usePitch";
 import { createRoot } from "react-dom/client";
 import { defaultScales, defaultScalesOptions } from "@/constants/scales";
+import { lessons as builtInLessons } from "@/constants/lessons";
 
 const groupStyles = {
   display: "flex",
@@ -84,7 +85,7 @@ export default function Page() {
   const [createActive, setCreateActive] = useState(false);
   const [newMutedString, setNewMutedString] = useState("");
   const [songs, setSongs] = useState<Song[]>([]);
-  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [lessons, setLessons] = useState<Lesson[]>(builtInLessons);
   const [shiftPatternOnMove, setShiftPatternOnMove] = useState(false);
   const [relativeSemitonePositionIndex, setRelativeSemitonePositionIndex] =
     useState<number | null>(null);
@@ -97,6 +98,8 @@ export default function Page() {
   const [lessonCreatorActive, setLessonCreatorActive] = useState(false);
   const [lessonName, setLessonName] = useState("");
   const [lessonPatterns, setLessonPatterns] = useState<Pattern[]>([]);
+
+  const [lessonPlayerActive, setLessonPlayerActive] = useState(false);
   // const [lessonPatternImageUrls, setLessonPatternImageUrls] = useState<
   //   string[]
   // >([]);
@@ -104,7 +107,7 @@ export default function Page() {
   const [activeLessonPatternIndex, setActiveLessonPatternIndex] = useState<
     number | null
   >(null);
-  const pitchInfo = usePitch();
+  // const pitchInfo = usePitch();
 
   const [activeScale, setActiveScale] = useState("");
   const [activeScaleShowSemitones, setActiveScaleShowSemitones] =
@@ -264,7 +267,7 @@ export default function Page() {
 
   const clearFretboard = () => {
     setPositions([]);
-    setActivePattern("");
+    setActivePattern("None selected");
     setActivePatternMutedStrings([]);
     setNewMutedString("");
     setActivePatternShiftOnMove(false);
@@ -311,18 +314,42 @@ export default function Page() {
     navigator.clipboard.writeText(url.toString() + "?" + urlParams.toString());
   };
 
+  const keyPressed = (e: any) => {
+    console.log("hey", e.key);
+    if (
+      e.key == "c" &&
+      lessonPlayerActive &&
+      activeLessonPatternIndex != null
+    ) {
+      console.log("hey!");
+      // setActiveLessonPatternIndex(activeLessonPatternIndex + 1)
+    }
+  };
+
   useEffect(() => {
-    console.log("Changed", activeLessonPatternIndex);
-    if (activeLessonPatternIndex != null) {
+    if (
+      activeLessonPatternIndex != null &&
+      lessonPatterns.length > 0 &&
+      activeLessonPatternIndex < lessonPatterns.length
+    ) {
       setActivePattern(lessonPatterns[activeLessonPatternIndex].name);
       setPositions(lessonPatterns[activeLessonPatternIndex].positions);
+      if (lessonPatterns[activeLessonPatternIndex].mutedStrings) {
+        setActivePatternMutedStrings(
+          lessonPatterns[activeLessonPatternIndex].mutedStrings,
+        );
+      }
+    } else {
+      clearFretboard();
     }
   }, [lessonPatterns, activeLessonPatternIndex]);
 
   useEffect(() => {
     if (!lessonCreatorActive) {
-      setActivePattern("");
-      setPositions([]);
+      // setActivePattern("");
+      // setPositions([]);
+      // setActivePatternMutedStrings([]);
+      clearFretboard();
     }
   }, [lessonCreatorActive]);
 
@@ -374,8 +401,8 @@ export default function Page() {
         else setActivePatternShiftOnMove(false);
         return;
       }
-    } else if (activePattern == "none") {
-      setPositions([]);
+    } else if (activePattern == "None selected") {
+      clearFretboard();
     }
   }, [activePattern]);
 
@@ -384,7 +411,11 @@ export default function Page() {
       setRelativeSemitonePositionIndex(null);
     }
 
-    if (activeLessonPatternIndex != null) {
+    if (
+      activeLessonPatternIndex != null &&
+      !lessonPlayerActive &&
+      activeLessonPatternIndex < lessonPatterns.length
+    ) {
       let newLessonPatterns = [...lessonPatterns];
       newLessonPatterns[activeLessonPatternIndex].positions = positions;
       setLessonPatterns(newLessonPatterns);
@@ -505,26 +536,14 @@ export default function Page() {
                       })}
                       styles={customSelectStyles}
                     />
-                    <button
-                      className={styles.controller_button}
-                      onClick={() => clearFretboard()}
-                    >
-                      Clear
-                    </button>
-                    <button
-                      className={styles.controller_button}
-                      onClick={downloadFretboardImage}
-                    >
+                    <button onClick={() => clearFretboard()}>Clear</button>
+                    <button onClick={downloadFretboardImage}>
                       Download Fretboard Image
                     </button>
-                    <button
-                      className={styles.controller_button}
-                      onClick={() => console.log(positions)}
-                    >
+                    <button onClick={() => console.log(positions)}>
                       Print Pattern
                     </button>
                     <button
-                      className={styles.controller_button}
                       onClick={() =>
                         shareElement(activeControllerNavItem, activePattern)
                       }
@@ -532,10 +551,7 @@ export default function Page() {
                       Share Pattern
                     </button>
                     {positions.length > 0 && (
-                      <button
-                        className={styles.controller_button}
-                        onClick={() => setCreateActive(true)}
-                      >
+                      <button onClick={() => setCreateActive(true)}>
                         Create Pattern
                       </button>
                     )}
@@ -569,21 +585,13 @@ export default function Page() {
                       </div>
                     ))}
                     <button
-                      className={
-                        styles.controller_button +
-                        " " +
-                        styles.controller_button_icon
-                      }
+                      className={styles.controller_button_icon}
                       onClick={() => incrementNumOverlays()}
                     >
                       +
                     </button>
                     <button
-                      className={
-                        styles.controller_button +
-                        " " +
-                        styles.controller_button_icon
-                      }
+                      className={styles.controller_button_icon}
                       onClick={() => decrementNumOverlays()}
                     >
                       -
@@ -651,11 +659,7 @@ export default function Page() {
                       onChange={(e) => setNewMutedString(e.target.value)}
                     />
                     <button
-                      className={
-                        styles.controller_button +
-                        " " +
-                        styles.controller_button_icon
-                      }
+                      className={styles.controller_button_icon}
                       onClick={() =>
                         Number(newMutedString)
                           ? setActivePatternMutedStrings([
@@ -668,11 +672,7 @@ export default function Page() {
                       +
                     </button>
                     <button
-                      className={
-                        styles.controller_button +
-                        " " +
-                        styles.controller_button_icon
-                      }
+                      className={styles.controller_button_icon}
                       onClick={() =>
                         setActivePatternMutedStrings(
                           activePatternMutedStrings.slice(0, -1),
@@ -726,12 +726,7 @@ export default function Page() {
                     <button onClick={() => setCreateActive(false)}>
                       Close
                     </button>
-                    <button
-                      className={styles.controller_button}
-                      onClick={createNewPattern}
-                    >
-                      Save Pattern
-                    </button>
+                    <button onClick={createNewPattern}>Save Pattern</button>
                   </div>
                 )}
               </>
@@ -782,7 +777,6 @@ export default function Page() {
                   </>
                 )}
                 <button
-                  className={styles.controller_button}
                   onClick={() => setSongCreatorActive(true)}
                 >
                   Create New Song
@@ -790,21 +784,79 @@ export default function Page() {
               </div>
             )} */}
             {activeControllerNavItem == "lessons" && (
-              <div className="controller-lessons">
-                {lessons.length > 0 ? (
-                  lessons.map((lesson, i) => (
-                    <div className={styles.card}>
-                      <div className={styles.card_img}>
-                        <img src={undefined} alt={lesson.name} />
-                      </div>
-                      <div className={styles.card_text}>
-                        <h3>{lesson.name}</h3>
-                        <p>{lesson.description.substring(0, 20)}...</p>
-                        <button onClick={() => {}}>Start</button>
-                      </div>
+              <div className={styles.controller_lessons}>
+                {lessonPlayerActive && (
+                  <>
+                    <h3>Lesson Player: {lessonName}</h3>
+                    <div className={styles.lesson_patterns}>
+                      {lessonPatterns.map((p, i) => (
+                        <div
+                          key={i}
+                          className={styles.lesson_pattern}
+                          onClick={() => setActiveLessonPatternIndex(i)}
+                        >
+                          {/* <div id={`lesson-pattern-${i}`}></div> */}
+                          <p>
+                            {p.name +
+                              (activeLessonPatternIndex == i
+                                ? " (active)"
+                                : "")}
+                          </p>
+                        </div>
+                      ))}
                     </div>
-                  ))
-                ) : (
+                    <button
+                      onClick={() => {
+                        setLessonPlayerActive(false);
+                        setActiveLessonPatternIndex(null);
+                        setLessonPatterns([]);
+                        setLessonName("");
+                      }}
+                    >
+                      Exit
+                    </button>
+                  </>
+                )}
+                {lessons.length > 0 && !lessonPlayerActive && (
+                  <>
+                    <h3>Lessons</h3>
+                    <div className={styles.controller_lessons_list}>
+                      {lessons.map((lesson, i) => (
+                        <div key={i} className={styles.card}>
+                          <div className={styles.card_img}>
+                            {lesson.thumbnail != undefined && (
+                              <img src={undefined} alt={lesson.name} />
+                            )}
+                          </div>
+                          <div className={styles.card_text}>
+                            <h3>{lesson.name}</h3>
+                            {lesson.description.length > 20 ? (
+                              <p>{lesson.description.substring(0, 20)}...</p>
+                            ) : lesson.description.length ? (
+                              <p>{lesson.description}</p>
+                            ) : null}
+                            <button
+                              onClick={() => {
+                                setLessonPlayerActive(true);
+                                setLessonName(lesson.name);
+                                setActiveLessonPatternIndex(0);
+                                setLessonPatterns(lesson.progression);
+                              }}
+                              style={{
+                                width: "100%",
+                                padding: "5px 0",
+                                marginTop: "10px",
+                              }}
+                            >
+                              Start
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+                {lessons.length == 0 && !lessonPlayerActive && (
                   <p>No lessons</p>
                 )}
                 {lessonCreatorActive && (
@@ -875,9 +927,7 @@ export default function Page() {
                               let newPatterns = [...lessonPatterns];
                               newPatterns.splice(i, 1);
                               setLessonPatterns(newPatterns);
-                              setActiveLessonPatternIndex(
-                                lessonPatterns.length,
-                              );
+                              setActiveLessonPatternIndex(newPatterns.length);
                             }}
                           >
                             Delete
@@ -896,7 +946,7 @@ export default function Page() {
                         onClick={() => {
                           setLessonPatterns([
                             ...lessonPatterns,
-                            { name: "", positions: [] },
+                            { name: "", positions: [], mutedStrings: [] },
                           ]);
                           setActiveLessonPatternIndex(lessonPatterns.length);
                         }}
@@ -908,29 +958,30 @@ export default function Page() {
                   </>
                 )}
                 <div className={styles.controller_selectors}>
-                  {lessonCreatorActive ? (
-                    <button
-                      className={styles.controller_button}
-                      onClick={() => setLessonCreatorActive(false)}
-                    >
+                  <button
+                    onClick={() => {
+                      if (lessonCreatorActive) {
+                        console.log({
+                          name: lessonName,
+                          description: lessonDescription,
+                          progression: lessonPatterns,
+                          thumbnail: undefined,
+                        });
+                      } else setLessonCreatorActive(true);
+                    }}
+                  >
+                    Create New Lesson
+                  </button>
+                  {lessonCreatorActive && (
+                    <button onClick={() => setLessonCreatorActive(false)}>
                       Close
                     </button>
-                  ) : (
-                    <button
-                      className={styles.controller_button}
-                      onClick={() => setLessonCreatorActive(true)}
-                    >
-                      Create New Lesson
-                    </button>
                   )}
-                  <button
-                    className={styles.controller_button}
-                    onClick={() => pitchInfo.setup()}
-                  >
+                  {/* <button onClick={() => pitchInfo.setup()}>
                     Listen for pitch
-                  </button>
+                  </button> */}
                 </div>
-                {pitchInfo.pitch}
+                {/* {pitchInfo.pitch} */}
               </div>
             )}
             {activeControllerNavItem == "settings" && (
@@ -954,19 +1005,21 @@ export default function Page() {
                   />
                 </div>
                 <p>Highlighted scale</p>
-                <Select
-                  value={{ value: activeScale, label: activeScale }}
-                  onChange={(e: any, f) =>
-                    f.action == "select-option" &&
-                    e &&
-                    e.value &&
-                    setActiveScale(e.value)
-                  }
-                  formatGroupLabel={formatGroupLabel}
-                  options={defaultScalesOptions}
-                  styles={customSelectStyles}
-                />
-                <button onClick={() => setActiveScale("")}>Clear</button>
+                <div className={styles.controller_selectors}>
+                  <Select
+                    value={{ value: activeScale, label: activeScale }}
+                    onChange={(e: any, f) =>
+                      f.action == "select-option" &&
+                      e &&
+                      e.value &&
+                      setActiveScale(e.value)
+                    }
+                    formatGroupLabel={formatGroupLabel}
+                    options={defaultScalesOptions}
+                    styles={customSelectStyles}
+                  />
+                  <button onClick={() => setActiveScale("")}>Clear</button>
+                </div>
                 <div className={styles.checkbox_container}>
                   <p>Show semitones</p>
                   <input
@@ -997,9 +1050,17 @@ export default function Page() {
             overlaidPatterns={positionOverlays}
             activeScaleShowSemitones={activeScaleShowSemitones}
             shiftOnMove={activePatternShiftOnMove}
+            lessonPlayerActive={lessonPlayerActive}
             onPositionAdd={onPositionAdd}
             onPositionHighlight={onPositionHighlight}
             onPositionDelete={onPositionDelete}
+            onPositionChange={(newPositions) => {
+              if (activeLessonPatternIndex != null) {
+                let newPatterns = [...lessonPatterns];
+                newPatterns[activeLessonPatternIndex].positions = newPositions;
+                setLessonPatterns(newPatterns);
+              }
+            }}
           />
         </div>
       </div>

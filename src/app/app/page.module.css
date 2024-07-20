@@ -48,7 +48,7 @@
   padding: 10px;
 }
 
-.controller_button {
+.controller_selectors button {
   padding: 5px 20px;
   border: 1.5px solid black;
   font-weight: 600;
@@ -125,4 +125,32 @@
   object-fit: cover;
   max-height: 150px;
   max-width: 150px;
+}
+
+.card {
+  display: flex;
+  width: 250px;
+  flex-direction: column;
+  border: 1px solid black;
+}
+
+.card_text {
+  padding: 10px;
+}
+
+.card_img {
+  flex: 1;
+  width: 100%;
+}
+
+.controller_lessons {
+  width: 100%;
+}
+
+.controller_lessons_list {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }

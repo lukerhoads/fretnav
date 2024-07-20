@@ -36,7 +36,7 @@ export default function RootLayout({
             {header_url.includes("/app") ? null : <Link href="/app">App</Link>}
             <Link href="/blog">Blog</Link>
             <Link href="/help">Help</Link>
-            {/* <button className={styles.header_button}>Go Pro</button> */}
+            <button className={styles.header_button}>Sign In</button>
           </div>
         </div>
         {children}
