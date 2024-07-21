@@ -10,7 +10,6 @@
   /* grid-template-columns: repeat(20, 5%); */
   grid-row: 1;
   /* grid-column: 2 / span 20; */
-  padding: 10px 0;
 }
 
 .fret_labels div {
@@ -25,21 +24,6 @@
   border-top: 1px solid black;
   grid-column: 1;
   /* grid-row: 2 / span 6; */
-  padding: 0 10px;
-}
-
-.string_labels div {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding: 0 10px;
-  position: relative;
-}
-
-.string_labels div p {
-  position: absolute;
-  bottom: -11px;
-  margin: 0;
 }
 
 .board {
@@ -59,13 +43,8 @@
   position: relative;
 }
 
-.board_container img {
-  width: 100%;
-}
-
 .fret_box {
   position: relative;
-  border-left: 1px solid black;
 }
 
 .fret_position {
@@ -77,9 +56,6 @@
   border-radius: 15px;
   border: 1px solid transparent;
   position: absolute;
-  bottom: -15px;
-  left: 50%;
-  transform: translateX(-50%);
   z-index: 11;
   display: flex;
   align-items: center;
@@ -116,10 +92,6 @@
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50px;
-}
-
-.board_image {
-  opacity: 0;
 }
 
 /*Switch to vertical */

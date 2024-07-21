@@ -15,7 +15,11 @@ import {
 } from "@/utils/note";
 import { DEFAULT_TUNING } from "@/constants/notes";
 import { DEFAULT_RESIZE_CONFIG, ResizeConfig } from "@/types/resize";
-import { DOT_POSITIONS } from "@/constants/styles";
+import {
+  DOT_POSITIONS,
+  stringLabelDivStyles,
+  stringLabelPStyles,
+} from "@/constants/styles";
 import { defaultScales } from "@/constants/scales";
 
 // TODO: shift to vertical after certain width achieved
@@ -272,15 +276,17 @@ const Fretboard = ({
     <div
       className={styles.fretboard}
       style={{
-        gridTemplateRows: `repeat(${(vertical ? fretGap : stringGap) + 1}, auto)`,
-        gridTemplateColumns: `repeat(${(vertical ? stringGap : fretGap) + 1}, auto)`,
+        gridTemplateRows: `min-content repeat(${vertical ? fretGap : stringGap}, auto)`,
+        gridTemplateColumns: ` min-content repeat(${vertical ? stringGap : fretGap}, auto)`,
       }}
     >
       <div
         className={styles.fret_labels}
         style={{
-          gridTemplateColumns: `repeat(${vertical ? stringGap : fretGap}, ${(100 / (vertical ? stringGap : fretGap)).toFixed(5)}%)`,
+          gridTemplateColumns: `repeat(${vertical ? stringGap + 1 : fretGap}, ${(100 / (vertical ? stringGap + 1 : fretGap)).toFixed(5)}%)`,
           gridColumn: `2 / span ${vertical ? stringGap : fretGap}`,
+          padding: vertical ? "20px 0" : "10px 0",
+          // padding: "10px 0",
         }}
       >
         {(vertical
@@ -295,9 +301,31 @@ const Fretboard = ({
               1,
             )
         ).map((i) => (
-          <div key={i}>
+          <div
+            key={i}
+            style={
+              vertical
+                ? Object.assign(
+                    {
+                      flexDirection: "column",
+                    },
+                    stringLabelDivStyles,
+                  )
+                : undefined
+            }
+          >
             {vertical ? (
-              <p className={mutedStrings.includes(i + 1) ? styles.muted : ""}>
+              <p
+                style={
+                  vertical
+                    ? {
+                        position: "absolute" as any,
+                        right: "-7px",
+                      }
+                    : undefined
+                }
+                className={mutedStrings.includes(6 - i) ? styles.muted : ""}
+              >
                 {tuning[i]}
               </p>
             ) : (
@@ -309,8 +337,9 @@ const Fretboard = ({
       <div
         className={styles.string_labels}
         style={{
-          gridTemplateRows: `repeat(${(vertical ? fretGap : stringGap) + 1}, ${(100 / ((vertical ? fretGap : stringGap) + 1)).toFixed(5)}%)`,
+          gridTemplateRows: `repeat(${vertical ? fretGap : stringGap + 1}, ${(100 / (vertical ? fretGap : stringGap + 1)).toFixed(5)}%)`,
           gridRow: `2 / span ${vertical ? fretGap : stringGap}`,
+          padding: vertical ? "0 10px" : "0 20px",
         }}
       >
         {(!vertical
@@ -325,12 +354,26 @@ const Fretboard = ({
               1,
             )
         ).map((i) => (
-          <div key={i}>
+          <div
+            key={i}
+            style={
+              !vertical
+                ? stringLabelDivStyles
+                : {
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }
+            }
+          >
             {vertical ? (
               <p>{i}</p>
             ) : (
-              <p className={mutedStrings.includes(i + 1) ? styles.muted : ""}>
-                {tuning[5 - i]}
+              <p
+                style={stringLabelPStyles}
+                className={mutedStrings.includes(i + 1) ? styles.muted : ""}
+              >
+                {tuning[tuning.length - 1 - i]}
               </p>
             )}
           </div>
@@ -342,18 +385,14 @@ const Fretboard = ({
         style={{
           gridRow: `2 / span ${vertical ? fretGap : stringGap}`,
           gridColumn: `2 / span ${vertical ? stringGap : fretGap}`,
+          minHeight: `${(vertical ? fretGap : stringGap) * 42}px`,
         }}
       >
-        <img
-          src="/fretboard-markers.png"
-          alt="board"
-          className={styles.board_image}
-        />
         <div
           className={styles.board}
           style={{
             gridTemplateRows: `repeat(${vertical ? fretGap : stringGap}, auto)`,
-            gridTemplateColumns: `repeat(${vertical ? stringGap : fretGap}, auto)`,
+            gridTemplateColumns: `repeat(${vertical ? stringGap + 1 : fretGap}, auto)`,
           }}
         >
           {[
@@ -363,20 +402,19 @@ const Fretboard = ({
                 resizeConfig.ending_string,
                 1,
               )
-                .map((i) =>
-                  arrayRange(
-                    i * 23,
-                    i * 23 + (vertical ? stringGap : fretGap) - 1,
-                    1,
-                  ),
-                )
+                .map((i) => arrayRange(i * 23, i * 23 + fretGap - 1, 1))
                 .flat()
                 .filter((i) => i < 161)
                 .filter((i) => i >= 0),
             ),
           ].map((i) => {
-            let fret = (i % 23) + 1; // resizeConfig.starting_fret + ((i % fretGap) + 1)
-            let gt_string = Math.floor(i / 23); // resizeConfig.starting_string + Math.floor(i / fretGap)
+            let fret =
+              (vertical
+                ? Math.floor(i / (vertical ? stringGap + 1 : fretGap))
+                : i % (vertical ? stringGap : fretGap)) + 1; // resizeConfig.starting_fret + ((i % fretGap) + 1)
+            let gt_string = vertical
+              ? 6 - (i % (vertical ? stringGap + 1 : fretGap))
+              : Math.floor(i / (vertical ? stringGap : fretGap)); // resizeConfig.starting_string + Math.floor(i / fretGap)
             let config = (dragging ? draggingPositions : positions).find(
               (p) =>
                 p.guitar_string == gt_string &&
@@ -445,9 +483,19 @@ const Fretboard = ({
                 className={styles.fret_box}
                 style={{
                   borderTop:
-                    gt_string - resizeConfig.starting_string > 0
+                    !vertical && gt_string - resizeConfig.starting_string > 0
                       ? `3px solid ${string_muted}`
                       : "1px solid black",
+                  borderRight:
+                    vertical && gt_string - resizeConfig.starting_string > 0
+                      ? `3px solid ${string_muted}`
+                      : (vertical && gt_string > 0) || (!vertical && fret < 23)
+                        ? "1px solid black"
+                        : undefined,
+                  borderLeft:
+                    (vertical && gt_string == 6) || (!vertical && fret == 1)
+                      ? "1px solid black"
+                      : undefined,
                 }}
               >
                 {relativeSemitonePositionIndex != null &&
@@ -491,20 +539,33 @@ const Fretboard = ({
                       }
                       onContextMenu={(e) => handleRightClick(e, i)}
                       className={styles.fret_position}
-                      style={{
-                        backgroundColor: config.color,
-                        border: "1px solid transparent",
-                        boxShadow:
-                          overlaidConfigs.length > 0
-                            ? overlaidConfigs
-                                .map(
-                                  (c, i) =>
-                                    `0 0 0 ${2 * i + 1}px white, 0 0 0 ${2 * i + 2}px ${c.color}`,
-                                )
-                                .join(", ")
-                            : "",
-                        // boxShadow: "0 0 0 2px white, 0 0 0 3px green"
-                      }}
+                      style={Object.assign(
+                        {
+                          backgroundColor: config.color,
+                          border: "1px solid transparent",
+                          boxShadow:
+                            overlaidConfigs.length > 0
+                              ? overlaidConfigs
+                                  .map(
+                                    (c, i) =>
+                                      `0 0 0 ${2 * i + 1}px white, 0 0 0 ${2 * i + 2}px ${c.color}`,
+                                  )
+                                  .join(", ")
+                              : "",
+                          // boxShadow: "0 0 0 2px white, 0 0 0 3px green"
+                        },
+                        vertical
+                          ? {
+                              left: "-17px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                            }
+                          : {
+                              bottom: "-15px",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                            },
+                      )}
                       onClick={() => onPositionHighlight(i, fret, gt_string)}
                     >
                       <p>{config.label}</p>
@@ -568,12 +629,12 @@ const Fretboard = ({
                       width: bc.current
                         ? bc.current.getBoundingClientRect().width /
                           (vertical ? stringGap : fretGap) /
-                          3
+                          (vertical ? 5 : 3)
                         : "20px",
                       height: bc.current
                         ? bc.current.getBoundingClientRect().width /
                           (vertical ? stringGap : fretGap) /
-                          3
+                          (vertical ? 5 : 3)
                         : "20px",
                       backgroundColor:
                         relativeSemitonePositionIndex != null

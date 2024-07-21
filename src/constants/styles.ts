@@ -1,6 +1,19 @@
 import { StylesConfig } from "react-select";
 import chroma from "chroma-js";
 
+export const stringLabelDivStyles = {
+  display: "flex",
+  alignItems: "flex-end",
+  justifyContent: "center",
+  position: "relative" as any,
+};
+
+export const stringLabelPStyles = {
+  position: "absolute" as any,
+  bottom: "-11px",
+  margin: 0,
+};
+
 export const DOT_POSITIONS = [
   {
     fret: 3,

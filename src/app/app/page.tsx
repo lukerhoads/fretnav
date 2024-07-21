@@ -90,11 +90,6 @@ export default function Page() {
   const [relativeSemitonePositionIndex, setRelativeSemitonePositionIndex] =
     useState<number | null>(null);
 
-  const [songCreatorActive, setSongCreatorActive] = useState(false);
-  const [songName, setSongName] = useState("");
-  const [songDescription, setSongDescription] = useState("");
-  const [songBpm, setSongBpm] = useState(120);
-
   const [lessonCreatorActive, setLessonCreatorActive] = useState(false);
   const [lessonName, setLessonName] = useState("");
   const [lessonPatterns, setLessonPatterns] = useState<Pattern[]>([]);
@@ -272,6 +267,18 @@ export default function Page() {
     setNewMutedString("");
     setActivePatternShiftOnMove(false);
     setRelativeSemitonePositionIndex(null);
+    if (lessonCreatorActive) {
+      if (
+        activeLessonPatternIndex != null &&
+        activeLessonPatternIndex < lessonPatterns.length
+      ) {
+        let newLessonPatterns = [...lessonPatterns];
+        newLessonPatterns[activeLessonPatternIndex].name = "";
+        newLessonPatterns[activeLessonPatternIndex].positions = [];
+        newLessonPatterns[activeLessonPatternIndex].mutedStrings = [];
+        setLessonPatterns(newLessonPatterns);
+      }
+    }
   };
 
   const incrementNumOverlays = () => {
@@ -375,9 +382,16 @@ export default function Page() {
   }, [patternOverlays]);
 
   useEffect(() => {
-    if (activePattern && activePattern != "" && activePattern != "none") {
+    if (
+      activePattern &&
+      activePattern != "" &&
+      activePattern != "none" &&
+      !lessonCreatorActive &&
+      !lessonPlayerActive
+    ) {
       let pattern = patterns.find((p) => p.name == activePattern);
       if (pattern) {
+        console.log("here1", pattern.positions);
         setPositions(pattern.positions);
         if (pattern.moveable) setActivePatternMoveable(pattern.moveable);
         else setActivePatternMoveable(false);
@@ -391,6 +405,7 @@ export default function Page() {
 
       pattern = userDefinedPatterns.find((p) => p.name == activePattern);
       if (pattern) {
+        console.log("here2");
         setPositions(pattern.positions);
         if (pattern.moveable) setActivePatternMoveable(pattern.moveable);
         else setActivePatternMoveable(false);
@@ -893,9 +908,12 @@ export default function Page() {
                                 let subPattern = patterns.find(
                                   (p) => p.name == e.value,
                                 );
-                                if (subPattern != undefined)
-                                  newPatterns[i] = subPattern;
-                                setLessonPatterns(newPatterns);
+                                if (subPattern != undefined) {
+                                  let b = Object.assign({}, subPattern);
+                                  console.log(b);
+                                  newPatterns[i] = b;
+                                  setLessonPatterns(newPatterns);
+                                }
                               }
                             }}
                             formatGroupLabel={formatGroupLabel}
@@ -919,6 +937,7 @@ export default function Page() {
                             onChange={(e) => {
                               let newPatterns = [...lessonPatterns];
                               newPatterns[i].name = e.target.value;
+                              console.log("New patterns: ", newPatterns);
                               setLessonPatterns(newPatterns);
                             }}
                           />
@@ -972,8 +991,16 @@ export default function Page() {
                   >
                     Create New Lesson
                   </button>
+
                   {lessonCreatorActive && (
-                    <button onClick={() => setLessonCreatorActive(false)}>
+                    <button
+                      onClick={() => {
+                        setLessonCreatorActive(false);
+                        setLessonPatterns([]);
+                        setLessonDescription("");
+                        setLessonName("");
+                      }}
+                    >
                       Close
                     </button>
                   )}

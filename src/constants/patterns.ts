@@ -15,6 +15,38 @@ export const pattern_categories = [
 
 export const patterns: Pattern[] = [
   {
+    name: "Minor 7 Flat 5",
+    positions: [
+      {
+        guitar_string: 5,
+        fret: 3,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 3,
+        fret: 3,
+        label: "b7",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 2,
+        fret: 3,
+        label: "b3",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 1,
+        fret: 2,
+        label: "b5",
+        color: "#FA1A0D",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
     name: "Major 7",
     positions: [
       {
@@ -2971,7 +3003,7 @@ export const patterns: Pattern[] = [
     moveable: true,
   },
   {
-    name: "Minor (D Shape)",
+    name: "Minor (D Form)",
     positions: [
       {
         guitar_string: 3,
