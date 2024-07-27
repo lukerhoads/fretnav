@@ -57,9 +57,9 @@ type Props = {
   relativeSemitonePositionIndex: number | null;
   shiftOnMove?: boolean;
   lessonPlayerActive?: boolean;
-  onPositionAdd?: (idx: number, note: string) => void;
-  onPositionHighlight?: (idx: number, fret: number, string: number) => void;
-  onPositionDelete?: (idx: number) => void;
+  onPositionAdd?: (fret: number, gt_string: number) => void;
+  onPositionHighlight?: (fret: number, string: number) => void;
+  onPositionDelete?: (fret: number, gt_string: number) => void;
   onPositionChange?: (newPositions: PositionConfig[]) => void;
 };
 
@@ -104,9 +104,9 @@ const Fretboard = ({
   const [semitoneShift, setSemitoneShift] = useState(false);
   const [vertical, setVertical] = useState(false);
 
-  const handleRightClick = (e: any, idx: number) => {
+  const handleRightClick = (e: any, gt_string: number, fret: number) => {
     e.preventDefault();
-    onPositionDelete(idx);
+    onPositionDelete(fret, gt_string);
   };
 
   const start = (fret: number, string: number) => {
@@ -537,7 +537,9 @@ const Fretboard = ({
                         !lessonPlayerActive &&
                         start(fret, gt_string)
                       }
-                      onContextMenu={(e) => handleRightClick(e, i)}
+                      onContextMenu={(e) =>
+                        handleRightClick(e, gt_string, fret)
+                      }
                       className={styles.fret_position}
                       style={Object.assign(
                         {
@@ -566,17 +568,30 @@ const Fretboard = ({
                               transform: "translateX(-50%)",
                             },
                       )}
-                      onClick={() => onPositionHighlight(i, fret, gt_string)}
+                      onClick={() => onPositionHighlight(fret, gt_string)}
                     >
                       <p>{config.label}</p>
                     </button>
                   ) : (
                     <button
                       className={styles.fret_position}
-                      style={{
-                        backgroundColor: "transparent",
-                      }}
-                      onClick={() => onPositionAdd(i, note)}
+                      style={Object.assign(
+                        {
+                          backgroundColor: "transparent",
+                        },
+                        vertical
+                          ? {
+                              left: "-17px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                            }
+                          : {
+                              bottom: "-15px",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                            },
+                      )}
+                      onClick={() => onPositionAdd(fret, gt_string)}
                     />
                   ))}
                 {gt_string < 6 &&
@@ -584,13 +599,26 @@ const Fretboard = ({
                   semitoneScaleOffset != null && (
                     <button
                       className={styles.fret_position}
-                      style={{
-                        backgroundColor:
-                          semitoneScaleOffset != null
-                            ? `rgba(255, 165, 0, ${1 - semitoneScaleOffset / (activeScaleShowSemitones ? 12 : 7)})`
-                            : undefined,
-                        border: "1px solid rgba(255, 165, 0, 1)",
-                      }}
+                      style={Object.assign(
+                        {
+                          backgroundColor:
+                            semitoneScaleOffset != null
+                              ? `rgba(255, 165, 0, ${1 - semitoneScaleOffset / (activeScaleShowSemitones ? 12 : 7)})`
+                              : undefined,
+                          border: "1px solid rgba(255, 165, 0, 1)",
+                        },
+                        vertical
+                          ? {
+                              left: "-17px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                            }
+                          : {
+                              bottom: "-15px",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                            },
+                      )}
                       disabled={true}
                     >
                       {semitoneScaleOffset}
@@ -606,14 +634,29 @@ const Fretboard = ({
                   overlaidConfigs.map((c, i) => (
                     <button
                       key={i}
-                      onContextMenu={(e) => handleRightClick(e, i)}
+                      onContextMenu={(e) =>
+                        handleRightClick(e, gt_string, fret)
+                      }
                       className={styles.fret_position}
-                      style={{
-                        backgroundColor: c.color,
-                        opacity: 0.5,
-                        border: "1px solid transparent",
-                        pointerEvents: "none",
-                      }}
+                      style={Object.assign(
+                        {
+                          backgroundColor: c.color,
+                          opacity: 0.5,
+                          border: "1px solid transparent",
+                          pointerEvents: "none" as any,
+                        },
+                        vertical
+                          ? {
+                              left: "-17px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                            }
+                          : {
+                              bottom: "-15px",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                            },
+                      )}
                     >
                       <p>{c.label}</p>
                     </button>

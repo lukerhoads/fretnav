@@ -108,7 +108,7 @@ export default function Page() {
   const [activeScaleShowSemitones, setActiveScaleShowSemitones] =
     useState(true);
 
-  const onPositionHighlight = (idx: number, fret: number, string: number) => {
+  const onPositionHighlight = (fret: number, string: number) => {
     let idx_active = positions.findIndex(
       (p) => p.guitar_string == string && p.fret == fret,
     );
@@ -118,26 +118,26 @@ export default function Page() {
     }, 2000);
   };
 
-  const onPositionAdd = (idx: number, note: string) => {
-    let fret = (idx % 23) + 1;
-    let string = Math.floor(idx / 23);
+  const onPositionAdd = (fret: number, gt_string: number) => {
+    // let fret = (idx % 23) + 1;
+    // let string = Math.floor(idx / 23);
     setPositions([
       ...positions,
       {
-        guitar_string: string,
+        guitar_string: gt_string,
         fret: fret,
-        label: note,
+        label: getNote(fret, gt_string, tuning),
         color: "black",
       },
     ]);
   };
 
-  const onPositionDelete = (idx: number) => {
+  const onPositionDelete = (fret: number, gt_string: number) => {
     // console.log("Deleting ", idx)
-    let fret = (idx % 23) + 1;
-    let string = Math.floor(idx / 23);
+    // let fret = (idx % 23) + 1;
+    // let string = Math.floor(idx / 23);
     setPositions(
-      positions.filter((p) => p.guitar_string != string || p.fret != fret),
+      positions.filter((p) => p.guitar_string != gt_string || p.fret != fret),
     );
   };
 
