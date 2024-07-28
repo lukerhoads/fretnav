@@ -158,7 +158,6 @@ const Fretboard = ({
       cleanUp();
     } else if (e.keyCode == 90 && e.ctrlKey) {
       if (lastAction) {
-        console.log(lastAction);
         if ((lastAction as PositionAction).type != undefined) {
           let action = lastAction as PositionAction;
           if (action.type == "ADD")

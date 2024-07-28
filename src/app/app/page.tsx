@@ -17,12 +17,9 @@ import { getNote } from "@/utils/note";
 import { hyphenate } from "@/utils/hyphenate";
 import { Song } from "@/types/song";
 import { Lesson } from "@/types/lesson";
-import Card from "@/components/Card/Card";
-import Timeline from "@/components/Timeline/Timeline";
-import usePitch from "@/app/hooks/usePitch";
-import { createRoot } from "react-dom/client";
 import { defaultScales, defaultScalesOptions } from "@/constants/scales";
 import { lessons as builtInLessons } from "@/constants/lessons";
+import { useKeyDown } from "@/utils/keydown";
 
 const groupStyles = {
   display: "flex",
@@ -321,17 +318,13 @@ export default function Page() {
     navigator.clipboard.writeText(url.toString() + "?" + urlParams.toString());
   };
 
-  const keyPressed = (e: any) => {
-    console.log("hey", e.key);
-    if (
-      e.key == "c" &&
-      lessonPlayerActive &&
-      activeLessonPatternIndex != null
-    ) {
-      console.log("hey!");
-      // setActiveLessonPatternIndex(activeLessonPatternIndex + 1)
+  useKeyDown(() => {
+    if (lessonPlayerActive && activeLessonPatternIndex != null) {
+      setActiveLessonPatternIndex(
+        (activeLessonPatternIndex + 1) % lessonPatterns.length,
+      );
     }
-  };
+  }, ["c"]);
 
   useEffect(() => {
     if (
@@ -339,7 +332,6 @@ export default function Page() {
       lessonPatterns.length > 0 &&
       activeLessonPatternIndex < lessonPatterns.length
     ) {
-      console.log("Changing active pattern");
       setActivePattern(lessonPatterns[activeLessonPatternIndex].name);
       if (lessonPatterns[activeLessonPatternIndex].shiftOnMove)
         setActivePatternMoveable(
