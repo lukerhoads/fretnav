@@ -339,7 +339,20 @@ export default function Page() {
       lessonPatterns.length > 0 &&
       activeLessonPatternIndex < lessonPatterns.length
     ) {
+      console.log("Changing active pattern");
       setActivePattern(lessonPatterns[activeLessonPatternIndex].name);
+      if (lessonPatterns[activeLessonPatternIndex].shiftOnMove)
+        setActivePatternMoveable(
+          lessonPatterns[activeLessonPatternIndex].shiftOnMove,
+        );
+      if (lessonPatterns[activeLessonPatternIndex].moveable)
+        setActivePatternMoveable(
+          lessonPatterns[activeLessonPatternIndex].moveable,
+        );
+      if (lessonPatterns[activeLessonPatternIndex].mutedStrings)
+        setActivePatternMutedStrings(
+          lessonPatterns[activeLessonPatternIndex].mutedStrings,
+        );
       setPositions(lessonPatterns[activeLessonPatternIndex].positions);
       if (lessonPatterns[activeLessonPatternIndex].mutedStrings) {
         setActivePatternMutedStrings(
@@ -390,29 +403,17 @@ export default function Page() {
       !lessonPlayerActive
     ) {
       let pattern = patterns.find((p) => p.name == activePattern);
+      if (pattern == undefined)
+        pattern = userDefinedPatterns.find((p) => p.name == activePattern);
       if (pattern) {
-        console.log("here1", pattern.positions);
         setPositions(pattern.positions);
+        console.log(pattern.moveable);
         if (pattern.moveable) setActivePatternMoveable(pattern.moveable);
-        else setActivePatternMoveable(false);
         if (pattern.mutedStrings)
           setActivePatternMutedStrings(pattern.mutedStrings);
         else setActivePatternMutedStrings([]);
-        if (pattern.shiftOnMove) setActivePatternShiftOnMove(true);
-        else setActivePatternShiftOnMove(false);
-        return;
-      }
-
-      pattern = userDefinedPatterns.find((p) => p.name == activePattern);
-      if (pattern) {
-        console.log("here2");
-        setPositions(pattern.positions);
-        if (pattern.moveable) setActivePatternMoveable(pattern.moveable);
-        else setActivePatternMoveable(false);
-        if (pattern.mutedStrings)
-          setActivePatternMutedStrings(pattern.mutedStrings);
-        else setActivePatternMutedStrings([]);
-        if (pattern.shiftOnMove) setActivePatternShiftOnMove(true);
+        if (pattern.shiftOnMove)
+          setActivePatternShiftOnMove(pattern.shiftOnMove);
         else setActivePatternShiftOnMove(false);
         return;
       }
@@ -658,11 +659,14 @@ export default function Page() {
                     ))}
                     {positions.length == 0 && <p>No positions</p>}
                   </div>
+                  <p>Muted Strings </p>
                   <p>
-                    Muted Strings{" "}
-                    {activePatternMutedStrings.map((string, i) => (
-                      <p key={i}>{string}</p>
-                    ))}
+                    {activePatternMutedStrings
+                      .map(
+                        (string, i) =>
+                          `${string} (${tuning[5 - (string - 1)]})`,
+                      )
+                      .join(", ")}
                   </p>
                   {activePatternMutedStrings.length == 0 && (
                     <p>No muted strings</p>
@@ -844,7 +848,7 @@ export default function Page() {
                             )}
                           </div>
                           <div className={styles.card_text}>
-                            <h3>{lesson.name}</h3>
+                            <h2>{lesson.name}</h2>
                             {lesson.description.length > 20 ? (
                               <p>{lesson.description.substring(0, 20)}...</p>
                             ) : lesson.description.length ? (
@@ -882,11 +886,13 @@ export default function Page() {
                         type="text"
                         placeholder="Lesson name"
                         onChange={(e) => setLessonName(e.target.value)}
+                        value={lessonName}
                       />
                       <input
                         type="text"
                         placeholder="Lesson description"
                         onChange={(e) => setLessonDescription(e.target.value)}
+                        value={lessonDescription}
                       />
                     </div>
                     <div className={styles.lesson_patterns}>

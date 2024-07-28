@@ -15,7 +15,39 @@ export const pattern_categories = [
 
 export const patterns: Pattern[] = [
   {
-    name: "Minor 7 Flat 5",
+    name: "Minor 7 Flat 5 (Root 2nd String)",
+    positions: [
+      {
+        guitar_string: 1,
+        fret: 3,
+        label: "b3",
+        color: "#0E8BC4",
+      },
+      {
+        guitar_string: 2,
+        fret: 2,
+        label: "b7",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 3,
+        fret: 3,
+        label: "b5",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 4,
+        fret: 2,
+        label: "1",
+        color: "#58B4EE",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Minor 7 Flat 5 (Root 1st String)",
     positions: [
       {
         guitar_string: 5,
@@ -47,7 +79,210 @@ export const patterns: Pattern[] = [
     shiftOnMove: true,
   },
   {
-    name: "Major 7",
+    name: "Minor 7 Flat 5 (Root 3rd String)",
+    positions: [
+      {
+        guitar_string: 3,
+        fret: 3,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 2,
+        fret: 4,
+        label: "b5",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 1,
+        fret: 4,
+        label: "b7",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 0,
+        fret: 4,
+        label: "b3",
+        color: "#FA1A0D",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+  },
+  {
+    name: "Dominant 7 (Root 1st String)",
+    positions: [
+      {
+        guitar_string: 5,
+        fret: 6,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 3,
+        fret: 6,
+        label: "b7",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 2,
+        fret: 7,
+        label: "3",
+        color: "#FA1A0D",
+      },
+      {
+        guitar_string: 1,
+        fret: 6,
+        label: "5",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 0,
+        fret: 6,
+        label: "1",
+        color: "#58B4EE",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Dominant 7 (Root 2nd String)",
+    positions: [
+      {
+        guitar_string: 4,
+        fret: 6,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 3,
+        fret: 8,
+        label: "5",
+        color: "#FA1A0D",
+      },
+      {
+        guitar_string: 2,
+        fret: 6,
+        label: "b7",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 1,
+        fret: 8,
+        label: "3",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 0,
+        fret: 6,
+        label: "5",
+        color: "#FA1A0D",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Minor 7 (Root 3rd String)",
+    positions: [
+      {
+        guitar_string: 3,
+        fret: 3,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 2,
+        fret: 5,
+        label: "5",
+        color: "#FA1A0D",
+      },
+      {
+        guitar_string: 1,
+        fret: 4,
+        label: "b7",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 0,
+        fret: 4,
+        label: "b3",
+        color: "#FD8D04",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Dominant 7 (Root 3rd String)",
+    positions: [
+      {
+        guitar_string: 3,
+        fret: 3,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 1,
+        fret: 4,
+        label: "b7",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 2,
+        fret: 5,
+        label: "5",
+        color: "#FA1A0D",
+      },
+      {
+        guitar_string: 0,
+        fret: 5,
+        label: "3",
+        color: "#FD8D04",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Major 7 (Root 3rd String)",
+    positions: [
+      {
+        guitar_string: 3,
+        fret: 5,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 2,
+        fret: 7,
+        label: "5",
+        color: "#FA1A0D",
+      },
+      {
+        guitar_string: 1,
+        fret: 7,
+        label: "7",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 0,
+        fret: 7,
+        label: "3",
+        color: "#FD8D04",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Major 7 (Root 2nd String)",
     positions: [
       {
         guitar_string: 4,
@@ -85,7 +320,7 @@ export const patterns: Pattern[] = [
     shiftOnMove: true,
   },
   {
-    name: "Minor 7",
+    name: "Minor 7 (Root 2nd String)",
     positions: [
       {
         guitar_string: 4,
@@ -116,6 +351,44 @@ export const patterns: Pattern[] = [
         fret: 3,
         label: "5",
         color: "#FA1A0D",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Minor 7 (Root 1st String)",
+    positions: [
+      {
+        guitar_string: 5,
+        fret: 3,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 3,
+        fret: 3,
+        label: "b7",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 2,
+        fret: 3,
+        label: "b3",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 1,
+        fret: 3,
+        label: "5",
+        color: "#FA1A0D",
+      },
+      {
+        guitar_string: 0,
+        fret: 3,
+        label: "1",
+        color: "#58B4EE",
       },
     ],
     category: "Moveable",
@@ -277,38 +550,6 @@ export const patterns: Pattern[] = [
     shiftOnMove: true,
   },
   {
-    name: "Minor",
-    positions: [
-      {
-        guitar_string: 2,
-        fret: 8,
-        label: "5",
-        color: "#FA1A0D",
-      },
-      {
-        guitar_string: 1,
-        fret: 9,
-        label: "1",
-        color: "#58B4EE",
-      },
-      {
-        guitar_string: 3,
-        fret: 9,
-        label: "b3",
-        color: "#FD8D04",
-      },
-      {
-        guitar_string: 4,
-        fret: 11,
-        label: "1",
-        color: "#58B4EE",
-      },
-    ],
-    category: "Moveable",
-    moveable: true,
-    shiftOnMove: true,
-  },
-  {
     name: "Major Arpeggio (1-2nps form 1)",
     positions: [
       {
@@ -433,6 +674,38 @@ export const patterns: Pattern[] = [
     shiftOnMove: true,
   },
   {
+    name: "Major 7 (Root 1st String)",
+    positions: [
+      {
+        guitar_string: 5,
+        fret: 5,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 3,
+        fret: 6,
+        label: "7",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 2,
+        fret: 6,
+        label: "3",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 1,
+        fret: 5,
+        label: "5",
+        color: "#FA1A0D",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
     name: "Major 7 / 7",
     positions: [
       {
@@ -549,7 +822,7 @@ export const patterns: Pattern[] = [
     shiftOnMove: true,
   },
   {
-    name: "Major 9",
+    name: "Major 9th (Moveable)",
     positions: [
       {
         guitar_string: 5,
@@ -574,6 +847,38 @@ export const patterns: Pattern[] = [
         fret: 5,
         label: "9",
         color: "#FA1A0D",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Minor 9th (Moveable)",
+    positions: [
+      {
+        guitar_string: 4,
+        fret: 8,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 3,
+        fret: 6,
+        label: "b3",
+        color: "#FD8D04",
+      },
+      {
+        guitar_string: 2,
+        fret: 8,
+        label: "b7",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 1,
+        fret: 8,
+        label: "9",
+        color: "#0E8BC4",
       },
     ],
     category: "Moveable",
@@ -794,39 +1099,7 @@ export const patterns: Pattern[] = [
     ],
   },
   {
-    name: "Major 6",
-    positions: [
-      {
-        guitar_string: 1,
-        fret: 6,
-        label: "1",
-        color: "#58B4EE",
-      },
-      {
-        guitar_string: 3,
-        fret: 7,
-        label: "3",
-        color: "#FD8D04",
-      },
-      {
-        guitar_string: 2,
-        fret: 5,
-        label: "5",
-        color: "#FA1A0D",
-      },
-      {
-        guitar_string: 4,
-        fret: 5,
-        label: "6",
-        color: "#ABCE30",
-      },
-    ],
-    category: "Moveable",
-    moveable: true,
-    shiftOnMove: true,
-  },
-  {
-    name: "Major 6 Drop 5",
+    name: "Major 6th Drop 5",
     positions: [
       {
         guitar_string: 1,
@@ -858,7 +1131,39 @@ export const patterns: Pattern[] = [
     shiftOnMove: true,
   },
   {
-    name: "Minor 6 Drop 5",
+    name: " Minor Diminished",
+    positions: [
+      {
+        guitar_string: 4,
+        fret: 11,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 3,
+        fret: 12,
+        label: "b5",
+        color: "#FA1A0D",
+      },
+      {
+        guitar_string: 2,
+        fret: 13,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 1,
+        fret: 12,
+        label: "b3",
+        color: "#FD8D04",
+      },
+    ],
+    mutedStrings: [],
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Minor 6th Drop 5",
     positions: [
       {
         guitar_string: 1,
@@ -890,7 +1195,7 @@ export const patterns: Pattern[] = [
     shiftOnMove: true,
   },
   {
-    name: "Minor 6",
+    name: "Minor 6th",
     positions: [
       {
         guitar_string: 1,
@@ -914,6 +1219,38 @@ export const patterns: Pattern[] = [
         guitar_string: 3,
         fret: 6,
         label: "b3",
+        color: "#FD8D04",
+      },
+    ],
+    category: "Moveable",
+    moveable: true,
+    shiftOnMove: true,
+  },
+  {
+    name: "Major 6th",
+    positions: [
+      {
+        guitar_string: 1,
+        fret: 6,
+        label: "1",
+        color: "#58B4EE",
+      },
+      {
+        guitar_string: 2,
+        fret: 5,
+        label: "5",
+        color: "#FA1A0D",
+      },
+      {
+        guitar_string: 4,
+        fret: 5,
+        label: "6",
+        color: "#ABCE30",
+      },
+      {
+        guitar_string: 3,
+        fret: 7,
+        label: "3",
         color: "#FD8D04",
       },
     ],
@@ -3032,6 +3369,7 @@ export const patterns: Pattern[] = [
     ],
     category: "Barre Chords",
     moveable: true,
+    mutedStrings: [5, 6],
   },
 ];
 

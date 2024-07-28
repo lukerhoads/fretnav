@@ -21,6 +21,7 @@ import {
   stringLabelPStyles,
 } from "@/constants/styles";
 import { defaultScales } from "@/constants/scales";
+import { Action, PositionAction, DragAction } from "@/types/actions";
 
 // TODO: shift to vertical after certain width achieved
 
@@ -103,10 +104,16 @@ const Fretboard = ({
   const [fretGap, setFretGap] = useState(23);
   const [semitoneShift, setSemitoneShift] = useState(false);
   const [vertical, setVertical] = useState(false);
+  const [lastAction, setLastAction] = useState<Action | null>(null);
 
   const handleRightClick = (e: any, gt_string: number, fret: number) => {
     e.preventDefault();
     onPositionDelete(fret, gt_string);
+    setLastAction({
+      type: "DELETE",
+      fret: fret,
+      gt_string: gt_string,
+    });
   };
 
   const start = (fret: number, string: number) => {
@@ -141,8 +148,29 @@ const Fretboard = ({
           positions[relativeSemitonePositionIndex],
         );
       setPositions(e.key == "Escape" ? initialPositions : draggingPositions);
-      if (e.key == "Enter") onPositionChange(draggingPositions);
+      if (e.key == "Enter") {
+        onPositionChange(draggingPositions);
+        setLastAction({
+          newPositions: draggingPositions,
+          oldPositions: initialPositions,
+        });
+      }
       cleanUp();
+    } else if (e.keyCode == 90 && e.ctrlKey) {
+      if (lastAction) {
+        console.log(lastAction);
+        if ((lastAction as PositionAction).type != undefined) {
+          let action = lastAction as PositionAction;
+          if (action.type == "ADD")
+            onPositionDelete(action.fret, action.gt_string);
+          else onPositionAdd(action.fret, action.gt_string);
+        } else if ((lastAction as DragAction).oldPositions != undefined) {
+          setPositions((lastAction as DragAction).oldPositions);
+          onPositionChange((lastAction as DragAction).oldPositions);
+        }
+
+        setLastAction(null);
+      }
     }
   };
 
@@ -532,11 +560,10 @@ const Fretboard = ({
                   (config != undefined ? (
                     <button
                       disabled={dragging}
-                      onMouseDown={() =>
-                        moveable &&
-                        !lessonPlayerActive &&
-                        start(fret, gt_string)
-                      }
+                      onMouseDown={(e) => {
+                        if (moveable && !lessonPlayerActive && e.button == 0)
+                          start(fret, gt_string);
+                      }}
                       onContextMenu={(e) =>
                         handleRightClick(e, gt_string, fret)
                       }
@@ -591,7 +618,14 @@ const Fretboard = ({
                               transform: "translateX(-50%)",
                             },
                       )}
-                      onClick={() => onPositionAdd(fret, gt_string)}
+                      onClick={() => {
+                        onPositionAdd(fret, gt_string);
+                        setLastAction({
+                          type: "ADD",
+                          fret: fret,
+                          gt_string: gt_string,
+                        });
+                      }}
                     />
                   ))}
                 {gt_string < 6 &&
