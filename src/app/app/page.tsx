@@ -319,7 +319,7 @@ export default function Page() {
   };
 
   useKeyDown(() => {
-    if (lessonPlayerActive && activeLessonPatternIndex != null) {
+    if (lessonPlayerActive && activeLessonPatternIndex != null && !lessonCreatorActive) {
       setActiveLessonPatternIndex(
         (activeLessonPatternIndex + 1) % lessonPatterns.length,
       );
@@ -621,7 +621,7 @@ export default function Page() {
                         {...position}
                         tuning={tuning}
                         onLabelChange={(label) =>
-                          label.length < 3 &&
+                          label.length < 4 &&
                           setPositions(
                             positions.map((p, i) =>
                               i == index ? { ...p, label } : p,
@@ -902,9 +902,11 @@ export default function Page() {
                             }}
                             onChange={(e: any, f) => {
                               if (f.action == "select-option" && e && e.value) {
+                                let name_split = e.value.split("-")
+                                if (name_split.length < 2) return
                                 let newPatterns = [...lessonPatterns];
                                 let subPattern = patterns.find(
-                                  (p) => p.name == e.value,
+                                  (p) => p.name == name_split[0] && p.category == name_split[1],
                                 );
                                 if (subPattern != undefined) {
                                   let b = Object.assign({}, subPattern);
@@ -918,7 +920,7 @@ export default function Page() {
                             options={defaultGroupedOptions.concat({
                               label: "User Defined",
                               options: userDefinedPatterns.map((p) => ({
-                                value: p.name,
+                                value: p.name + "-" + p.category,
                                 label: p.name,
                               })),
                             })}

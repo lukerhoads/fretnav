@@ -495,9 +495,9 @@ const Fretboard = ({
             if (highlightedScale != "") {
               let scale = defaultScales.find((s) => s.name == highlightedScale);
               if (scale) {
-                let offset = scale.notes.indexOf(note);
+                let offset = scale.notes.indexOf(note) + 1;
                 let real_offset = getNoteSemitoneOffset(scale.notes[0], note);
-                if (offset != -1) {
+                if (offset > 0) {
                   semitoneScaleOffset = activeScaleShowSemitones
                     ? real_offset
                     : offset;
@@ -636,7 +636,7 @@ const Fretboard = ({
                         {
                           backgroundColor:
                             semitoneScaleOffset != null
-                              ? `rgba(255, 165, 0, ${1 - semitoneScaleOffset / (activeScaleShowSemitones ? 12 : 7)})`
+                              ? `rgba(255, 165, 0, ${1 - semitoneScaleOffset / (activeScaleShowSemitones ? 13 : 8)})`
                               : undefined,
                           border: "1px solid rgba(255, 165, 0, 1)",
                         },

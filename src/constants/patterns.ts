@@ -10,6 +10,7 @@ export const pattern_categories = [
   "Harmonization",
   "Moveable",
   "Arpeggio",
+  "Shell Chords",
   "Test",
 ];
 
@@ -46,6 +47,166 @@ export const patterns: Pattern[] = [
     moveable: true,
     shiftOnMove: true,
   },
+  {
+    "name": "Diminished 7 (Root 2nd String)",
+    "positions": [
+        {
+            "guitar_string": 2,
+            "fret": 7,
+            "label": "bb7",
+            "color": "#ABCE30"
+        },
+        {
+            "guitar_string": 4,
+            "fret": 8,
+            "label": "1",
+            "color": "#58B4EE"
+        },
+        {
+            "guitar_string": 3,
+            "fret": 9,
+            "label": "b5",
+            "color": "#FA1A0D"
+        },
+        {
+            "guitar_string": 1,
+            "fret": 9,
+            "label": "b3",
+            "color": "#FD8D04"
+        }
+    ],
+    "category": "Moveable",
+    "moveable": true,
+    "shiftOnMove": true
+},
+{
+  "name": "Diminished 7th (Root 1st String)",
+  "positions": [
+      {
+          "guitar_string": 5,
+          "fret": 5,
+          "label": "1",
+          "color": "#58B4EE"
+      },
+      {
+          "guitar_string": 1,
+          "fret": 4,
+          "label": "b5",
+          "color": "#FA1A0D"
+      },
+      {
+          "guitar_string": 3,
+          "fret": 4,
+          "label": "bb7",
+          "color": "#ABCE30"
+      },
+      {
+          "guitar_string": 2,
+          "fret": 5,
+          "label": "b3",
+          "color": "#FD8D04"
+      }
+  ],
+  "category": "Moveable",
+  "moveable": true,
+  "shiftOnMove": true
+},
+  {
+    "name": "Minor 9th (Root 2nd String)",
+    "positions": [
+        {
+            "guitar_string": 4,
+            "fret": 5,
+            "label": "1",
+            "color": "#58B4EE"
+        },
+        {
+            "guitar_string": 2,
+            "fret": 5,
+            "label": "b7",
+            "color": "#ABCE30"
+        },
+        {
+            "guitar_string": 1,
+            "fret": 5,
+            "label": "9",
+            "color": "#F7ED37"
+        },
+        {
+            "guitar_string": 3,
+            "fret": 3,
+            "label": "b3",
+            "color": "#FD8D04"
+        }
+    ],
+    "category": "Moveable",
+    "moveable": true,
+    "shiftOnMove": true
+},
+  {
+    "name": "Dominant 9 Chord (Root 2nd String)",
+    "positions": [
+        {
+            "guitar_string": 4,
+            "fret": 5,
+            "label": "1",
+            "color": "#58B4EE"
+        },
+        {
+            "guitar_string": 3,
+            "fret": 4,
+            "label": "3",
+            "color": "#FD8D04"
+        },
+        {
+            "guitar_string": 2,
+            "fret": 5,
+            "label": "b7",
+            "color": "#ABCE30"
+        },
+        {
+            "guitar_string": 1,
+            "fret": 5,
+            "label": "9",
+            "color": "#F7ED37"
+        }
+    ],
+    "category": "Moveable",
+    "moveable": true,
+    "shiftOnMove": true
+},
+  {
+    "name": "Major 7th (Root 4th String)",
+    "positions": [
+        {
+            "guitar_string": 0,
+            "fret": 9,
+            "label": "7",
+            "color": "#ABCE30"
+        },
+        {
+            "guitar_string": 1,
+            "fret": 7,
+            "label": "3",
+            "color": "#FD8D04"
+        },
+        {
+            "guitar_string": 2,
+            "fret": 7,
+            "label": "1",
+            "color": "#58B4EE"
+        },
+        {
+            "guitar_string": 3,
+            "fret": 7,
+            "label": "5",
+            "color": "#FA1A0D"
+        }
+    ],
+    "category": "Moveable",
+    "moveable": true,
+    "shiftOnMove": true
+},
   {
     name: "Minor 7 Flat 5 (Root 1st String)",
     positions: [
@@ -1131,37 +1292,37 @@ export const patterns: Pattern[] = [
     shiftOnMove: true,
   },
   {
-    name: " Minor Diminished",
-    positions: [
-      {
-        guitar_string: 4,
-        fret: 11,
-        label: "1",
-        color: "#58B4EE",
-      },
-      {
-        guitar_string: 3,
-        fret: 12,
-        label: "b5",
-        color: "#FA1A0D",
-      },
-      {
-        guitar_string: 2,
-        fret: 13,
-        label: "1",
-        color: "#58B4EE",
-      },
-      {
-        guitar_string: 1,
-        fret: 12,
-        label: "b3",
-        color: "#FD8D04",
-      },
+    "name": "Diminished (D Form)",
+    "positions": [
+        {
+            "guitar_string": 3,
+            "fret": 5,
+            "label": "1",
+            "color": "#58B4EE"
+        },
+        {
+            "guitar_string": 2,
+            "fret": 6,
+            "label": "b5",
+            "color": "#FA1A0D"
+        },
+        {
+            "guitar_string": 1,
+            "fret": 8,
+            "label": "1",
+            "color": "#58B4EE"
+        },
+        {
+            "guitar_string": 0,
+            "fret": 6,
+            "label": "b3",
+            "color": "#FD8D04"
+        }
     ],
-    mutedStrings: [],
-    moveable: true,
-    shiftOnMove: true,
-  },
+    "category": "Barre Chords",
+    "moveable": true,
+    mutedStrings: [5, 6]
+},
   {
     name: "Minor 6th Drop 5",
     positions: [
@@ -1698,6 +1859,270 @@ export const patterns: Pattern[] = [
       },
     ],
   },
+  {
+    "name": "Dominant 7th / 5",
+    "positions": [
+        {
+            "guitar_string": 3,
+            "fret": 5,
+            "label": "1",
+            "color": "#58B4EE"
+        },
+        {
+            "guitar_string": 4,
+            "fret": 5,
+            "label": "5",
+            "color": "#FA1A0D"
+        },
+        {
+            "guitar_string": 2,
+            "fret": 4,
+            "label": "3",
+            "color": "#FD8D04"
+        },
+        {
+            "guitar_string": 1,
+            "fret": 6,
+            "label": "b7",
+            "color": "#ABCE30"
+        }
+    ],
+    "category": "Moveable",
+    "moveable": true,
+    "shiftOnMove": true
+},
+{
+  "name": "Aadd9",
+  "positions": [
+      {
+          "guitar_string": 2,
+          "fret": 6,
+          "label": "C#",
+          "color": "black"
+      },
+      {
+          "guitar_string": 3,
+          "fret": 7,
+          "label": "A",
+          "color": "black"
+      }
+  ],
+  "category": "Open Chords",
+  mutedStrings: [5, 6]
+},
+{
+  "name": "E (Strings 2-5)",
+  "positions": [
+      {
+          "guitar_string": 2,
+          "fret": 4,
+          "label": "B",
+          "color": "black"
+      },
+      {
+          "guitar_string": 1,
+          "fret": 5,
+          "label": "E",
+          "color": "black"
+      },
+      {
+          "guitar_string": 3,
+          "fret": 6,
+          "label": "G#",
+          "color": "black"
+      }
+  ],
+  "category": "Open Chords",
+  "mutedStrings": [
+      5,
+      1
+  ]
+},
+{
+  "name": "A (Strings 2-5)",
+  "positions": [
+      {
+          "guitar_string": 1,
+          "fret": 5,
+          "label": "E",
+          "color": "black"
+      },
+      {
+          "guitar_string": 2,
+          "fret": 6,
+          "label": "C#",
+          "color": "black"
+      },
+      {
+          "guitar_string": 3,
+          "fret": 7,
+          "label": "A",
+          "color": "black"
+      }
+  ],
+  "category": "Open Chords",
+  mutedStrings: [1, 6],
+},
+{
+  "name": "Minor 7 (Root 6th String)",
+  "positions": [
+      {
+          "guitar_string": 3,
+          "fret": 3,
+          "label": "b7",
+          "color": "#ABCE30"
+      },
+      {
+          "guitar_string": 0,
+          "fret": 3,
+          "label": "1",
+          "color": "#58B4EE"
+      },
+      {
+          "guitar_string": 1,
+          "fret": 3,
+          "label": "5",
+          "color": "#FA1A0D"
+      },
+      {
+          "guitar_string": 2,
+          "fret": 3,
+          "label": "b3",
+          "color": "#FD8D04"
+      }
+  ],
+  "category": "Moveable",
+  "moveable": true,
+  "shiftOnMove": true
+},
+{
+  "name": "C6add9 (Rootless)",
+  "positions": [
+      {
+          "guitar_string": 2,
+          "fret": 2,
+          "label": "6",
+          "color": "#ABCE30"
+      },
+      {
+          "guitar_string": 3,
+          "fret": 2,
+          "label": "3",
+          "color": "#FD8D04"
+      },
+      {
+          "guitar_string": 1,
+          "fret": 3,
+          "label": "9",
+          "color": "#F7ED37"
+      },
+      {
+          "guitar_string": 0,
+          "fret": 3,
+          "label": "5",
+          "color": "#FA1A0D"
+      }
+  ],
+  "category": "Moveable",
+  "moveable": true,
+  "shiftOnMove": true
+},
+{
+  "name": "Dominant 7th (Root 2nd and 5th Strings)",
+  "positions": [
+      {
+          "guitar_string": 1,
+          "fret": 3,
+          "label": "1",
+          "color": "#58B4EE"
+      },
+      {
+          "guitar_string": 3,
+          "fret": 4,
+          "label": "3",
+          "color": "#FD8D04"
+      },
+      {
+          "guitar_string": 2,
+          "fret": 5,
+          "label": "b7",
+          "color": "#ABCE30"
+      },
+      {
+          "guitar_string": 4,
+          "fret": 5,
+          "label": "1",
+          "color": "#58B4EE"
+      }
+  ],
+  "category": "Moveable",
+  "moveable": true,
+  "shiftOnMove": true
+},
+{
+  "name": "Major 7 (Root 3rd String) Form 2",
+  "positions": [
+      {
+          "guitar_string": 3,
+          "fret": 7,
+          "label": "1",
+          "color": "#58B4EE"
+      },
+      {
+          "guitar_string": 2,
+          "fret": 6,
+          "label": "3",
+          "color": "#FD8D04"
+      },
+      {
+          "guitar_string": 1,
+          "fret": 5,
+          "label": "5",
+          "color": "#FA1A0D"
+      },
+      {
+          "guitar_string": 0,
+          "fret": 4,
+          "label": "7",
+          "color": "#ABCE30"
+      }
+  ],
+  "category": "Moveable",
+  "moveable": true,
+  "shiftOnMove": true
+},
+{
+  "name": "Dominant 7 / 5 (Root 1st String)",
+  "positions": [
+      {
+          "guitar_string": 5,
+          "fret": 8,
+          "label": "5",
+          "color": "#FA1A0D"
+      },
+      {
+          "guitar_string": 3,
+          "fret": 7,
+          "label": "3",
+          "color": "#FD8D04"
+      },
+      {
+          "guitar_string": 2,
+          "fret": 8,
+          "label": "b7",
+          "color": "#ABCE30"
+      },
+      {
+          "guitar_string": 1,
+          "fret": 6,
+          "label": "1",
+          "color": "#58B4EE"
+      }
+  ],
+  "category": "Moveable",
+  "moveable": true,
+  "shiftOnMove": true
+},
   {
     name: "Sus4",
     category: "Barre Chords",

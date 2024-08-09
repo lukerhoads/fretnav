@@ -4,7 +4,7 @@ export const useKeyDown = (callback: () => void, keys: string[]) => {
   const onKeyDown = (event: KeyboardEvent) => {
     const wasAnyKeyPressed = keys.some((key) => event.key === key);
     if (wasAnyKeyPressed) {
-      event.preventDefault();
+      // event.preventDefault();
       callback();
     }
   };
